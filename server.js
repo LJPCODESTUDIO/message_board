@@ -2,6 +2,9 @@ const Express = require('express');
 const Mongoose = require('mongoose');
 const Cors = require('cors');
 const Path = require('path');
+const cookieParser = require("cookie-parser");
+const authRoute = require("./routes/AuthRoute");
+require("dotenv").config();
 
 // Variables
 const Port = process.env.PORT || 4000;
@@ -14,6 +17,8 @@ const App = Express();
 App.use(Cors());
 App.use(Express.json());
 App.use(Express.static(Path.join(__dirname, 'frontend', 'dist')));
+App.use(cookieParser());
+App.use('/', authRoute);
 
 async function Start() {
   try {
@@ -26,4 +31,4 @@ async function Start() {
   }
 }
 
-start();
+Start();
