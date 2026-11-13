@@ -2,8 +2,8 @@ const Express = require('express');
 const Mongoose = require('mongoose');
 const Cors = require('cors');
 const Path = require('path');
-const cookieParser = require("cookie-parser");
-const authRoute = require("./routes/AuthRoute");
+const CookieParser = require("cookie-parser");
+const AuthRoute = require("./routes/AuthRoute");
 require("dotenv").config();
 
 // Variables
@@ -17,8 +17,8 @@ const App = Express();
 App.use(Cors());
 App.use(Express.json());
 App.use(Express.static(Path.join(__dirname, 'frontend', 'dist')));
-App.use(cookieParser());
-App.use('/', authRoute);
+App.use(CookieParser());
+App.use('/', AuthRoute);
 
 async function Start() {
   try {
