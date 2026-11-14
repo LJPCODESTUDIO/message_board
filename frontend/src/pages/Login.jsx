@@ -6,15 +6,15 @@ import axios from 'axios';
 function Login() {
     const [Email, SetEmail] = useState();
     const [Password, SetPassword] = useState();
-    const Navigate = useNavigate();
+    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         // so the browser accepts the cookie
-        axios.post('http://localhost:4000/login', {Email, Password}, { withCredentials: true })  
+        axios.post('http://localhost:4000/api/login', {Email, Password}, { withCredentials: true })  
         .then(result => {console.log(result)
             if(result.data.success){
-                Navigate('/home')
+                navigate('/home');
             }
         })
         .catch(err=> console.log(err));
@@ -47,7 +47,7 @@ function Login() {
                 </button>
             </form>
             <p>Don't have an account yet?</p>
-            <Link to="/register" className="btn">
+            <Link to="/signup" className="btn">
             Sign Up
             </Link>
         </div>

@@ -14,8 +14,13 @@ const DbConnection = process.env.DB_CONNECTION || 'mongodb://localhost:27017/Mes
 // Express configuration
 const App = Express();
 
-// Middleware
-App.use(Cors());
+// Middleware 
+// edited it for cookie credentials
+App.use(Cors({
+  origin: ["http://localhost:5173"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+}));
 App.use(Express.json());
 App.use(Express.static(Path.join(__dirname, 'frontend', 'dist')));
 App.use(CookieParser());

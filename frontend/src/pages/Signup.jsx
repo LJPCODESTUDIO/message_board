@@ -6,13 +6,13 @@ function Signup() {
     const [Username, SetUsername] = useState("");
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
-    const Navigate = useNavigate();
+    const navigate = useNavigate();
     
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:4000/register', {Username, Email, Password})
+        axios.post('http://localhost:4000/api/signup', {Username, Email, Password}, {WithCredentials: true})
         .then(result => {console.log(result)
-        Navigate('/login')
+        navigate('/login');
         })
         .catch(err => console.log(err));
     };
@@ -56,6 +56,7 @@ return(
         <p>Already have an Account?</p>
         <Link to="/login" className="btn">Login</Link>
     </div>
-)}
+);
+}
 
 export default Signup;
