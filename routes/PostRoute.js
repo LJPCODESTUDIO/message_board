@@ -1,13 +1,14 @@
 const Router = require('express').Router();
-const PostController = require('../controllers/PostController');
+const { GetPosts, GetPostById, CreatePost, UpdatePost, DeletePost } = require('../controllers/PostController');
+const { AuthorizeAndBlock, AuthorizeAndPass } = require('../controllers/AuthController');
 
-Router.get('/posts', PostController.GetPosts);
-Router.get('/post/:Id', PostController.GetPostById);
+Router.route('/posts').get(GetPosts);
+Router.route('/post/:Id').get(GetPostById);
 
-Router.post('/create/post', PostController.CreatePost);
+Router.route('/create/post').post(AuthorizeAndBlock, CreatePost);
 
-Router.put('/update/post/:Id', PostController.UpdatePost);
+Router.route('/update/post/:Id').put(AuthorizeAndBlock, UpdatePost);
 
-Router.delete('/delete/post/:Id', PostController.DeletePost);
+Router.route('/delete/post/:Id').delete(AuthorizeAndBlock, DeletePost);
 
 module.exports = Router;

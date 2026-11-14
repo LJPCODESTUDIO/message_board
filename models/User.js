@@ -18,8 +18,9 @@ const UserSchema = new mongoose.Schema({
     },
     Password: {
         type: String, 
-     required: [true, "Password is required"]
-}
+        required: [true, "Password is required"]
+    },
+    IsAnonymous: { type: Boolean, default: false } // This flag is needed since anonymous profiles will still need to be stored. However we could probably just point them all to the same profile.
 });
 
 UserSchema.pre("save", async function () {

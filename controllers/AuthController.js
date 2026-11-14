@@ -1,6 +1,8 @@
 const User = require("../models/User");
-const { CreateSecretToken } = require("../util/SecretToken");
+const Profile = require('../models/Profile');
+const { CreateSecretToken, CheckSecretToken } = require("../util/SecretToken");
 const bcrypt = require("bcryptjs");
+const User = require("../models/User");
 
 module.exports.Signup = async (req, res, next) => {
     try{
@@ -10,8 +12,13 @@ module.exports.Signup = async (req, res, next) => {
         if (ExistingUser) {
             return res.json({ message: "User already exists"});
         }
+        const ExistingProfile = await User.findOne({ Username });
+        if (ExistingProfile) {
+            return res.json({ message: "Username already exists" });
+        } 
 
-        const NewUser = await User.create({ Email, Password, Username });
+        const NewProfile = await Profile.create({ Username: Username });
+        const NewUser = await User.create({ Email: Email, Profile: NewProfile, Password: Password });
         //this is where the token is created
         const Token = CreateSecretToken(NewUser._id);
         //token sent in a cookie to the browser
@@ -45,6 +52,9 @@ module.exports.Login = async (req, res, next) => {
         if (!user) {
             return res.json({ message: "Incorrect email or password" });
         }
+        if (user.Username === "anonymous") {
+            return res.json({ message: "Reserved Account" });
+        }
         
         const Auth = await bcrypt.compare(Password, user.Password);
         if (!Auth) {
@@ -64,4 +74,42 @@ module.exports.Login = async (req, res, next) => {
         console.error(error);
         res.status(500).json({ message: error.message });
     }
+}
+
+module.exports.AuthorizeAndBlock = async (req, res, next) => {
+    const AuthHeader = req.headers.authorization;
+
+    if (!AuthHeader || !AuthHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Unauthorized: Invalid Token' });
+    }
+
+    const Token = AuthHeader.split(' ')[1];
+
+    const Decoded = CheckSecretToken(Token);
+    if (Decoded === null) {
+        return res.status(401).json({ message: 'Unauthorized: Invalid Token' });
+    }
+    
+    req.CurrUser = await User.findById(Decoded.id).exec();
+    next();
+}
+
+module.exports.AuthorizeAndPass = async (req, res, next) => {
+    const AuthHeader = req.headers.authorization;
+
+    if (!AuthHeader || !AuthHeader.startsWith('Bearer ')) {
+        req.CurrUser = await Profile.findOne({ Username: 'Anonymous' }).exec();
+        return next();
+    }
+
+    const Token = AuthHeader.split(' ')[1];
+
+    const Decoded = CheckSecretToken(Token);
+    if (Decoded === null) {
+        req.CurrUser = await User.findOne({ Username: 'Anonymous' }).exec();
+        return next();
+    }
+
+    req.CurrUser = await User.findById(Decoded.id).exec();
+    next();
 }

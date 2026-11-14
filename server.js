@@ -31,6 +31,11 @@ async function Start() {
   try {
     await Mongoose.connect(DbConnection);
     console.log(`Connected to Database on: ${DbConnection}`);
+    // Ensures there is always an anonymous profile
+    const AnonymousProfile = User.findOne({ Username: 'anonymous' });
+    if (AnonymousProfile === null) {
+      User.create({ Email: 'fake@email.com', Username: 'anonymous', Password: '123', IsAnonymous: true });
+    }
     App.listen(Port, () => console.log(`Server started on port: ${Port}`));
   }
   catch (Err) {

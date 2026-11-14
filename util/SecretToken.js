@@ -6,3 +6,13 @@ module.exports.CreateSecretToken = (id) => { //server uses { id } to know who is
         expiresIn: '3d', //token is valid for 3 days
     });
 };
+
+module.exports.CheckSecretToken = (token) => {
+    try {
+        const Decoded = jwt.verify(token, process.env.TOKEN_KEY);
+        return Decoded;
+    }
+    catch {
+        return null;
+    }
+} 

@@ -1,3 +1,4 @@
+const { Mongoose, Schema } = require('mongoose');
 const Post = require('../models/Post');
 
 // GET methods
@@ -41,8 +42,8 @@ module.exports.CreatePost = async (req, res) => {
 // PUT methods
 module.exports.UpdatePost = async (req, res) => {
   try {
-    const Id = req.params.Id;
-    const UpdatedPost = await Post.findByIdAndUpdate(Id, req.body).exec();
+    const UpdatedPost = await Post.findById(Id).exec();
+    if (UpdatedPost.Poster)
     res.json(UpdatedPost);
   }
   catch(Err) {

@@ -8,7 +8,7 @@ const Post = Mongoose.model('Post', {
   Dislikes: Number,
   Poster: {
     type: Mongoose.Schema.Types.ObjectId,
-    ref: 'Profile'
+    ref: 'User'
   },
   CreationDate: { type: Date, default: Date.now },
   LastEdited: { type: Date, default: Date.now }
