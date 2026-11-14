@@ -4,6 +4,7 @@ const Cors = require('cors');
 const Path = require('path');
 const CookieParser = require("cookie-parser");
 const AuthRoute = require("./routes/AuthRoute");
+const PostRoute = require('./routes/PostRoute');
 require("dotenv").config();
 
 // Variables
@@ -18,7 +19,8 @@ App.use(Cors());
 App.use(Express.json());
 App.use(Express.static(Path.join(__dirname, 'frontend', 'dist')));
 App.use(CookieParser());
-App.use('/', AuthRoute);
+App.use('/api', AuthRoute);
+App.use('/api', PostRoute);
 
 async function Start() {
   try {

@@ -28,5 +28,8 @@
   "bugs": {
     "url": "https://github.com/LJPCODESTUDIO/message_board/issues"
   },
-  "homepage": "https://github.com/LJPCODESTUDIO/message_board#readme"
+  "homepage": "https://github.com/LJPCODESTUDIO/message_board#readme",
+  "allowScripts": {
+    "bcrypt@6.0.0": true
+  }
 }
