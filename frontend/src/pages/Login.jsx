@@ -4,17 +4,17 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 
 function Login() {
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const navigate = useNavigate();
+    const [Email, SetEmail] = useState();
+    const [Password, SetPassword] = useState();
+    const Navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
         // so the browser accepts the cookie
-        axios.post('http://localhost:4000/login', {email, password}, { withCredentials: true })  
+        axios.post('http://localhost:4000/login', {Email, Password}, { withCredentials: true })  
         .then(result => {console.log(result)
             if(result.data.success){
-                navigate('/home')
+                Navigate('/home')
             }
         })
         .catch(err=> console.log(err));
@@ -29,7 +29,7 @@ function Login() {
                     </label>
                     <input type="email" placeholder="Enter Email Adress"
                     name="email" className = "form-control"
-                    onChange={(e) => setEmail(e.target.value)} />
+                    onChange={(e) => SetEmail(e.target.value)} />
                 </div>
 
                 <div>
@@ -38,7 +38,7 @@ function Login() {
                     </label>
                     <input type="password" placeholder="Enter Password"
                     name="password" className= "form-control"
-                    onChange={(e) => setPassword(e.target.value)}>
+                    onChange={(e) => SetPassword(e.target.value)}>
                     </input>
                 </div>
 
