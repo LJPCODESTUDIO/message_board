@@ -11,7 +11,7 @@ function Login() {
     const handleSubmit = (e) => {
         e.preventDefault();
         // so the browser accepts the cookie
-        axios.post('http://localhost:4000/api/login', {Email, Password}, { withCredentials: true })  
+        axios.post('/api/login', {Email, Password}, { withCredentials: true })  
         .then(result => {console.log(result)
             if(result.data.success){
                 navigate('/home');

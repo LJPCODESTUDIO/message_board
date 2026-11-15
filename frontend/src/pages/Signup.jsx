@@ -10,7 +10,7 @@ function Signup() {
     
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:4000/api/signup', {Username, Email, Password}, {WithCredentials: true})
+        axios.post('/api/signup', {Username, Email, Password}, {WithCredentials: true})
         .then(result => {console.log(result)
         navigate('/login');
         })
