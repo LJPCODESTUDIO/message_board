@@ -1,5 +1,6 @@
 const Express = require('express');
 const Mongoose = require('mongoose');
+const User = require('./models/User');
 const Cors = require('cors');
 const Path = require('path');
 const CookieParser = require("cookie-parser");
@@ -32,7 +33,7 @@ async function Start() {
     await Mongoose.connect(DbConnection);
     console.log(`Connected to Database on: ${DbConnection}`);
     // Ensures there is always an anonymous profile
-    const AnonymousProfile = User.findOne({ Username: 'anonymous' });
+    const AnonymousProfile = await User.findOne({ Username: 'anonymous' });
     if (AnonymousProfile === null) {
       User.create({ Email: 'fake@email.com', Username: 'anonymous', Password: '123', IsAnonymous: true });
     }
