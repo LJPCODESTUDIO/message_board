@@ -14,7 +14,7 @@ function Login() {
         axios.post('/api/login', {Email, Password}, { withCredentials: true })  
         .then(result => {console.log(result)
             if(result.data.success){
-                navigate('/home');
+                navigate('/');
             }
         })
         .catch(err=> console.log(err));

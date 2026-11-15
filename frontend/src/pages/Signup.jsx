@@ -12,7 +12,7 @@ function Signup() {
         e.preventDefault();
         axios.post('/api/signup', {Username, Email, Password}, {WithCredentials: true})
         .then(result => {console.log(result)
-        navigate('/login');
+        navigate('/');
         })
         .catch(err => console.log(err));
     };

@@ -75,32 +75,28 @@ module.exports.Login = async (req, res, next) => {
 }
 
 module.exports.AuthorizeAndBlock = async (req, res, next) => {
-    const AuthHeader = req.headers.authorization;
+    const Token = req.cookies.token;
 
-    if (!AuthHeader || !AuthHeader.startsWith('Bearer ')) {
+    if (!Token) {
         return res.status(401).json({ message: 'Unauthorized: Invalid Token' });
     }
-
-    const Token = AuthHeader.split(' ')[1];
 
     const Decoded = CheckSecretToken(Token);
     if (Decoded === null) {
         return res.status(401).json({ message: 'Unauthorized: Invalid Token' });
     }
     
-    req.CurrUser = await User.findById(Decoded.id).exec();
+    res.CurrUser = await User.findById(Decoded.id);
     next();
 }
 
 module.exports.AuthorizeAndPass = async (req, res, next) => {
-    const AuthHeader = req.headers.authorization;
+    const Token = req.cookies.token;
 
-    if (!AuthHeader || !AuthHeader.startsWith('Bearer ')) {
-        req.CurrUser = await Profile.findOne({ Username: 'Anonymous' }).exec();
+    if (!Token) {
+        res.CurrUser = await Profile.findOne({ Username: 'Anonymous' }).exec();
         return next();
     }
-
-    const Token = AuthHeader.split(' ')[1];
 
     const Decoded = CheckSecretToken(Token);
     if (Decoded === null) {
@@ -108,6 +104,6 @@ module.exports.AuthorizeAndPass = async (req, res, next) => {
         return next();
     }
 
-    req.CurrUser = await User.findById(Decoded.id).exec();
+    req.CurrUser = await User.findById(Decoded.id);
     next();
 }

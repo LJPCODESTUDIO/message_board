@@ -44,7 +44,12 @@ module.exports.CreatePost = async (req, res) => {
     if (res.CurrUser.Username === 'anonymous') {
       return res.status(401).json({ message: 'Only users that are logged in are allowed to create posts' });
     }
-    const NewPost = await Post.create(req.body);
+    const PostData = {
+      Title: req.body.Title,
+      Content: req.body.Content,
+      Poster: res.CurrUser._id
+    }
+    const NewPost = await Post.create(PostData);
     res.status(201).json(NewPost);
   }
   catch (Err) {
