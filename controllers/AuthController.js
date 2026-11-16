@@ -94,13 +94,13 @@ module.exports.AuthorizeAndPass = async (req, res, next) => {
     const Token = req.cookies.token;
 
     if (!Token) {
-        res.CurrUser = await Profile.findOne({ Username: 'Anonymous' }).exec();
+        res.CurrUser = await Profile.findOne({ Username: 'Anonymous' });
         return next();
     }
 
     const Decoded = CheckSecretToken(Token);
     if (Decoded === null) {
-        req.CurrUser = await User.findOne({ Username: 'Anonymous' }).exec();
+        req.CurrUser = await User.findOne({ Username: 'Anonymous' });
         return next();
     }
 
