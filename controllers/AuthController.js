@@ -8,15 +8,14 @@ module.exports.Signup = async (req, res, next) => {
 
         const ExistingUser = await User.findOne({ Email });
         if (ExistingUser) {
-            return res.json({ message: "User already exists"});
+            return res.status(403).json({ message: "User already exists"});
         }
-        const ExistingProfile = await User.findOne({ Username });
-        if (ExistingProfile) {
-            return res.json({ message: "Username already exists" });
+        const ExistingUsername = await User.findOne({ Username });
+        if (ExistingUsername) {
+            return res.status(403).json({ message: "Username already exists" });
         } 
 
-        const NewProfile = await Profile.create({ Username: Username });
-        const NewUser = await User.create({ Email: Email, Profile: NewProfile, Password: Password });
+        const NewUser = await User.create({ Email: Email, Username: Username, Password: Password });
         //this is where the token is created
         const Token = CreateSecretToken(NewUser._id);
         //token sent in a cookie to the browser
@@ -48,15 +47,15 @@ module.exports.Login = async (req, res, next) => {
 
         const user = await User.findOne({ Email });
         if (!user) {
-            return res.json({ message: "Incorrect email or password" });
+            return res.status(400).json({ message: "Incorrect email or password" });
         }
         if (user.Username === "anonymous") {
-            return res.json({ message: "Reserved Account" });
+            return res.status(403).json({ message: "Reserved Account" });
         }
         
         const Auth = await bcrypt.compare(Password, user.Password);
         if (!Auth) {
-            return res.json({ message: 'Incorrect email or password'});
+            return res.status(401).json({ message: 'Incorrect email or password'});
         }
 
         const token = CreateSecretToken(user._id);
