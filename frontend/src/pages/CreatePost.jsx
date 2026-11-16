@@ -18,31 +18,38 @@ function CreatePost() {
     let TempErrors = [];
 
     try {
-      if (Action === 'Create') {
-        Response = await axios.post('/api/create/post', { Title: Title, Content: Content }, { withCredentials: true });
+      let IsValid = true;
+      
+      if (Title.trim() === '') {
+        IsValid = false;
+        TempErrors = [...TempErrors, 'The post requires a title.'];
       }
-      else {
-        Response = await axios.put(`/api/update/post/${Params.Id}`, { Title: Title, Content: Content }, { withCredentials: true });
+
+      if (IsValid) {
+        if (Action === 'Create') {
+          await axios.post('/api/create/post', { Title: Title, Content: Content }, { withCredentials: true });
+        }
+        else {
+          await axios.put(`/api/update/post/${Params.Id}`, { Title: Title, Content: Content }, { withCredentials: true });
+        }
+
+        Navigate('/');
       }
     }
     catch (Err) {
-      console.error(Err);
-      TempErrors = [...TempErrors, Err];
+      switch (Err.status) {
+        case 401:
+          TempErrors = [...TempErrors, 'Only users that are logged in can create posts.'];
+          break;
+        default:
+          console.error(Err);
+          TempErrors = [...TempErrors, Err.message];
+          break;
+      }
     }
-
-    switch (Response.status) {
-      case 201:
-        Navigate('/')
-        break;
-      case 401:
-        console.error(Response.data.message);
-        TempErrors = [...TempErrors, Response.data.message];
-        break;
-      default:
-        console.log(Response.data);
+    finally {
+      SetErrors(TempErrors);
     }
-
-    SetErrors(TempErrors);
   }
 
   return (
@@ -52,7 +59,7 @@ function CreatePost() {
         <h2>Enter a Title</h2>
         <ul style={{ color: 'red' }}>
           {Errors.map((E) => (
-            <li>{E}</li>
+            <li key={E}>{E}</li>
           ))}
         </ul>
         <input value={Title} onChange={(e) => { SetTitle(e.target.value) }} />
