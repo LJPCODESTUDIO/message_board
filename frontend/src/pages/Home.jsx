@@ -16,7 +16,7 @@ function Home() {
     const Controller = new AbortController();
     FetchPosts();
     return () => Controller.abort(); // Apparently do this to avoid memory leaks
-  });
+  }, []);
 
   return (
     <div>
@@ -27,7 +27,8 @@ function Home() {
       <h1>Posts</h1>
       {Posts.map(P => (
         <Post
-          key={P.Poster._id}
+          key={P._id}
+          Id={P._id}
           Username={P.Poster.Username}
           Title={P.Title}
           Content={P.Content}

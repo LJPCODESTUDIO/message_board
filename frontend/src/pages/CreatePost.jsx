@@ -1,14 +1,26 @@
 import axios from "axios";
 import { useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-function CreatePost(props) {
-  const [Title, SetTitle] = useState('');
-  const [Content, SetContent] = useState('');
+function CreatePost() {
+  const Params = useParams();
+  const Location = useLocation();
+  const [Title, SetTitle] = useState((Params.Id) ? Location.state.Title : '');
+  const [Content, SetContent] = useState((Params.Id) ? Location.state.Content : '');
+  const Navigate = useNavigate();
 
-  const handleSavePost = (e) => {
+  const Action = (Params.Id) ? 'Edit' : 'Create';
+
+  const handleSavePost = async (e) => {
     e.preventDefault();
 
-    axios.post('/api/create/post', { Title: Title, Content: Content }, { withCredentials: true });
+    if (Action === 'Create') {
+      await axios.post('/api/create/post', { Title: Title, Content: Content }, { withCredentials: true });
+    }
+    else {
+      await axios.put(`/api/update/post/${Params.Id}`, { Title: Title, Content: Content }, { withCredentials: true });
+    }
+    Navigate('/');
   }
 
   return (
@@ -19,7 +31,7 @@ function CreatePost(props) {
         <h1>Enter the Body</h1>
         <textarea value={Content} onChange={(e) => { SetContent(e.target.value) }} />
         <br />
-        <button type="submit">Create Post</button>
+        <button type="submit">{Action} Post</button>
       </form>
     </div>
   );

@@ -1,22 +1,28 @@
 const Mongoose = require('mongoose');
 const Post = require('../models/Post');
 
+// Utility Methods
+function GetPostResponse(P) {
+  return {
+        _id: P._id,
+        Title: P.Title,
+        Content: P.Content,
+        Likes: P.Likes,
+        Dislikes: P.Dislikes,
+        Poster: {
+          _id: P.Poster._id,
+          Username: P.Poster.Username
+        }
+      }
+}
+
 // GET methods
 module.exports.GetPostById = async (req, res) => {
   try {
     const Id = req.params.Id;
     const FoundPost = await Post.findById(Id).populate('Poster');
     if (FoundPost) {
-      const ForClient = {
-        Title: FoundPost.Title,
-        Content: FoundPost.Content,
-        Likes: FoundPost.Likes,
-        Dislikes: FoundPost.Dislikes,
-        Poster: {
-          _id: FoundPost.Poster._id,
-          Username: FoundPost.Poster.Username
-        }
-      }
+      const ForClient = GetPostResponse(FoundPost);
       res.json(ForClient);
     }
     else {
@@ -31,7 +37,29 @@ module.exports.GetPostById = async (req, res) => {
 module.exports.GetPosts = async (req, res) => {
   try {
     const Posts = await Post.find().populate('Poster');
-    res.json(Posts);
+    const PostsForClient = Posts.map(P => { return GetPostResponse(P); });
+
+    res.json(PostsForClient);
+  }
+  catch (Err) {
+    res.status(500).json({ message: Err.message });
+  }
+}
+
+module.exports.GetUserPermissionLevel = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const FoundPost = await Post.findById(Id).populate('Poster');
+    if (FoundPost) {
+      if (res.CurrUser._id.equals(FoundPost.Poster._id)) {
+        return res.json({ Level: 2 });
+      }
+
+      return res.json({ Level: 0 });
+    }
+    else {
+      res.status(404).json({ message: 'Post with that ID does not exist' });
+    }
   }
   catch (Err) {
     res.status(500).json({ message: Err.message });
@@ -44,6 +72,7 @@ module.exports.CreatePost = async (req, res) => {
     if (res.CurrUser.Username === 'anonymous') {
       return res.status(401).json({ message: 'Only users that are logged in are allowed to create posts' });
     }
+
     const PostData = {
       Title: req.body.Title,
       Content: req.body.Content,
@@ -61,11 +90,17 @@ module.exports.CreatePost = async (req, res) => {
 module.exports.UpdatePost = async (req, res) => {
   try {
     const Id = req.params.Id;
-    const PostToUpdate = await Post.findById(Id);
-    if (PostToUpdate.Poster._id !== res.CurrUser._id) {
+    const PostToUpdate = await Post.findById(Id).populate('Poster');
+    if (!res.CurrUser._id.equals(PostToUpdate.Poster._id)) {
       return res.status(401).json({ message: 'Only the original poster can edit a post' });
     }
-    const UpdatedPost = await Post.findOneAndUpdate(PostToUpdate, req.body, { returnDocument: 'after' });
+    
+    const NewData = {
+      Title: req.body.Title,
+      Content: req.body.Content,
+      LastEdited: Date.now()
+    }
+    const UpdatedPost = await Post.findOneAndUpdate(PostToUpdate, NewData, { returnDocument: 'after' });
     res.json(UpdatedPost);
   }
   catch(Err) {
@@ -78,8 +113,8 @@ module.exports.DeletePost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToDelete = await Post.findById(Id);
-    if (PostToDelete.Poster._id !== res.CurrUser._id) {
-      return res.status(401).json({ message: 'Only the original poster can edit a post' });
+    if (res.CurrUser._id.equals(FoundPost.Poster._id)) {
+      return res.status(401).json({ message: 'Only the original poster can delete a post' });
     }
     const Deleted = await Post.findOneAndDelete(PostToDelete);
     res.json(Deleted);

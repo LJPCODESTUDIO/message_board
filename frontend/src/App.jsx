@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import axios from 'axios';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Home from './pages/Home'
 import CreatePost from './pages/CreatePost';
+import PostDetail from './pages/PostDetail';
 
 function App() {
   return (
@@ -13,6 +13,8 @@ function App() {
           <Route path="/login" element={<Login />}/>
           <Route path="/signup" element={<Signup />}/>
           <Route path='/create/post' element={<CreatePost />} />
+          <Route path='/edit/post/:Id' element={<CreatePost />} />
+          <Route path='/post/:Id' element={<PostDetail />} />
       </Routes>
     </BrowserRouter>
   );

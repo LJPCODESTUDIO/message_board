@@ -10,8 +10,8 @@ const Post = Mongoose.model('Post', {
     type: Mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
-  CreationDate: { type: Date, default: Date.now },
-  LastEdited: { type: Date, default: Date.now }
+  CreationDate: { type: Date, default: Date.now() },
+  LastEdited: { type: Date, default: Date.now() }
 });
 
 module.exports = Post;
