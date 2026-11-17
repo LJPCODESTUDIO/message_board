@@ -14,7 +14,6 @@ function CreatePost() {
 
   const handleSavePost = async (e) => {
     e.preventDefault();
-    let Response;
     let TempErrors = [];
 
     try {
@@ -56,12 +55,12 @@ function CreatePost() {
     <div>
       <form onSubmit={handleSavePost}>
         <h1>{Action} a Post</h1>
-        <h2>Enter a Title</h2>
-        <ul style={{ color: 'red' }}>
+        <ul className="error">
           {Errors.map((E) => (
             <li key={E}>{E}</li>
           ))}
         </ul>
+        <h2>Enter a Title</h2>
         <input value={Title} onChange={(e) => { SetTitle(e.target.value) }} />
         <h2>Enter the Body</h2>
         <textarea value={Content} onChange={(e) => { SetContent(e.target.value) }} />

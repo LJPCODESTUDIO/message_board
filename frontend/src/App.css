@@ -234,3 +234,7 @@ ul {
     font-size: 26px;
   }
 }
+
+.error {
+  color: FF9999;
+}
