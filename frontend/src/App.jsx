@@ -4,6 +4,7 @@ import Signup from './pages/Signup';
 import Home from './pages/Home'
 import CreatePost from './pages/CreatePost';
 import PostDetail from './pages/PostDetail';
+import './App.css';
 
 function App() {
   return (

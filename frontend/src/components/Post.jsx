@@ -4,7 +4,7 @@ function Post(props) {
   const Navigate = useNavigate();
 
   return (
-    <div>
+    <div className="post-card">
       <button onClick={() => { Navigate(`/post/${props.Id}`)}}>
         <h3>{props.Username}</h3>
         <h1>{props.Title}</h1>

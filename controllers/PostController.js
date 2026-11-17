@@ -113,10 +113,10 @@ module.exports.DeletePost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToDelete = await Post.findById(Id);
-    if (res.CurrUser._id.equals(FoundPost.Poster._id)) {
+    if (!res.CurrUser._id.equals(PostToDelete.Poster)) {
       return res.status(401).json({ message: 'Only the original poster can delete a post' });
     }
-    const Deleted = await Post.findOneAndDelete(PostToDelete);
+    const Deleted = await Post.findByIdAndDelete(Id);
     res.json(Deleted);
   }
   catch (Err) {
