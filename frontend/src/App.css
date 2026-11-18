@@ -58,7 +58,7 @@ a:hover {
 form {
   background-color: #15284b;
   border: 1px solid #344b70;
-  border-radius: 14px;
+  border-radius: 0;
   padding: 30px;
   max-width: 650px;
   margin: 30px auto;
@@ -84,7 +84,7 @@ textarea {
   margin: 8px 0 20px;
   background-color: #0c1b37;
   border: 1px solid #52698e;
-  border-radius: 8px;
+  border-radius: 0;
   color: #ffffff;
   font-size: 16px;
   font-family: inherit;
@@ -114,7 +114,7 @@ button,
   color: #07172f;
   padding: 12px 22px;
   border: none;
-  border-radius: 8px;
+  border-radius: 0;
   font-size: 15px;
   font-weight: bold;
   cursor: pointer;
@@ -140,7 +140,7 @@ a:focus-visible,
 .post-card {
   background-color: #15284b;
   border: 1px solid #344b70;
-  border-radius: 14px;
+  border-radius: 0;
   padding: 24px;
   margin: 20px 0;
   transition: transform 0.2s, border-color 0.2s;
@@ -171,6 +171,7 @@ a:focus-visible,
   background: transparent;
   color: inherit;
   border: none;
+  border-radius: 0;
   padding: 0;
   margin: 0;
 }
@@ -191,7 +192,7 @@ a:focus-visible,
 .post-detail {
   background-color: #15284b;
   border: 1px solid #344b70;
-  border-radius: 14px;
+  border-radius: 0;
   padding: 30px;
   margin-top: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -209,6 +210,7 @@ a:focus-visible,
 .delete-btn {
   background-color: #f26d75;
   color: #101b33;
+  border-radius: 0;
 }
 
 .delete-btn:hover {
@@ -233,8 +235,4 @@ ul {
   h1 {
     font-size: 26px;
   }
-}
-
-.error {
-  color: #FF9999;
 }
