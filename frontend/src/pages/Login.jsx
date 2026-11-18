@@ -52,7 +52,7 @@ function Login() {
             </Link>
             
             <p>Continue without an account</p> 
-            <Link to="/home" className="btn">Anonymous
+            <Link to="/" className="btn">Anonymous
             </Link>button here is temporary and to be edited
         </div>
     )
