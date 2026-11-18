@@ -10,6 +10,8 @@ Installation instructions
 
 7. In the root message_board folder, create a new .env file named ".env"
 8. You can use .env.example to see how to structure your .env file. Just copying it to the .env will be enough to get it to work for demonstration purposes, though this is not secure for real life deployment.
+9. In the front end terminal, type npm run dev to start the server.
+10. Ctrl click on the link to begin the app.
 
 
 References:
@@ -22,3 +24,4 @@ https://github.com/TedCady/Mern-Stack/blob/master/Readings_008_MERN_Auth/009_Log
 https://howhttpworks.com/guides/cookie-security
 https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Status
 https://react.dev/learn/you-might-not-need-an-effect
+https://dev.to/shahinn0x/understanding-model-controller-and-route-in-mern-stack-with-example-e4i

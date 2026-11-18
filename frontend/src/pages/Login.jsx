@@ -30,6 +30,7 @@ function Login() {
                     <input type="email" placeholder="Enter Email Adress"
                     name="email" className = "form-control"
                     onChange={(e) => SetEmail(e.target.value)} />
+                    
                 </div>
 
                 <div>
