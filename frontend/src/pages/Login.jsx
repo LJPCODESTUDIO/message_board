@@ -50,6 +50,10 @@ function Login() {
             <Link to="/signup" className="btn">
             Sign Up
             </Link>
+            
+            <p>Continue without an account</p> 
+            <Link to="/home" className="btn">Anonymous
+            </Link>button here is temporary and to be edited
         </div>
     )
 }

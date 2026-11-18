@@ -21,7 +21,8 @@ module.exports.Signup = async (req, res, next) => {
         //token sent in a cookie to the browser
         res.cookie("token", Token, {
             withCredentials: true,
-            httpOnly: false
+            httpOnly: false, // true is best security practice, but to keep it simple we can keep it false.
+            sameSite: 'lax' // can't be sent cross-site
         });
 
         res.status(201).json
@@ -60,7 +61,8 @@ module.exports.Login = async (req, res, next) => {
 
         const token = CreateSecretToken(user._id);
         res.cookie("token", token, {
-            httpOnly: false        
+            httpOnly: false ,  
+            sameSite: 'lax'     
         })
 
         res.status(200).json({
@@ -70,6 +72,25 @@ module.exports.Login = async (req, res, next) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
+    }
+}
+
+// using a post request to clear the cookie
+module.exports.Logout = async (req, res, next) => {
+    try {res.cookie("token", "", {
+        httpOnly: false,
+        expires: new Date(0), //should cause it to expire immediately.
+        sameSite: 'lax'
+    })
+
+    return res.status(200).json({
+        message: "Successfully logged out",
+        success: true
+    });
+
+    } catch {
+        console.error(error);
+        return res.status(500).json({ message: error.message });
     }
 }
 

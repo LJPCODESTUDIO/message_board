@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Post from "../components/Post";
 import getCookie from "../util/CookieFetcher";
+import Logout from "../components/Logout";
 
 function Home() {
   const [Posts, SetPosts] = useState([]);
@@ -20,9 +21,11 @@ function Home() {
 
   return (
     <div>
-      <Link to='/login'>Login</Link> <br />
+      <Logout />
+      <br />
+
       {getCookie('token') !== '' ? (
-        <Link to='/create/post'>Create Post</Link>
+          <Link to='/create/post'>Create Post</Link>
       ) : (<></>)}
       <h1>Posts</h1>
       {Posts.map(P => (
