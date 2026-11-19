@@ -21,7 +21,7 @@ fi
 
 echo "Pulling latest code into target environment ($TARGET_DIR)..."
 cd $TARGET_DIR
-git pull $GITHUB_REPO
+git pull $GITHUB_REPO testing-deploy # TEMPORARY WHILE TESTING
 
 echo "Building project..."
 npm run build
