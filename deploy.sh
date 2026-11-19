@@ -13,7 +13,7 @@ TARGET_DIR=$BLUE_DIR
 OLD_NAME=$GREEN_NAME
 
 echo "Checking active environment"
-if [pm2 pid $TARGET_NAME | grep -q '.']; then
+if [ pm2 pid $TARGET_NAME | grep -q '.' ]; then
   TARGET_NAME=$GREEN_NAME
   TARGET_DIR=$GREEN_DIR
   OLD_NAME=$BLUE_NAME
@@ -24,6 +24,7 @@ cd $TARGET_DIR
 git pull $GITHUB_REPO testing-deploy # TEMPORARY WHILE TESTING
 
 echo "Building project..."
+npm ci
 npm run build
 
 echo "Starting new environment..."
@@ -35,7 +36,7 @@ sleep 5 # Give the server a chance to start
 echo "Checking target environment health..."
 STATUS_CODE = $(curl -s -o /dev/null -w "%{http_code}" http://localhost:$PORT)
 
-if ["$STATUS_CODE" -ne 200]; then
+if [ "$STATUS_CODE" -ne 200 ]; then
   echo "Target environment health check failed with status code: $STATUS_CODE"
   echo "Remaining on previous environment"
   exit 1
