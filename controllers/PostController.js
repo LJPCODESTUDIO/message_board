@@ -100,7 +100,7 @@ module.exports.UpdatePost = async (req, res) => {
       Content: req.body.Content,
       LastEdited: Date.now()
     }
-    const UpdatedPost = await Post.findOneAndUpdate(PostToUpdate, NewData, { returnDocument: 'after' });
+    const UpdatedPost = await Post.findByIdAndUpdate(Id, NewData, { returnDocument: 'after' });
     res.json(UpdatedPost);
   }
   catch(Err) {
