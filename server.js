@@ -23,10 +23,14 @@ App.use(Cors({
   credentials: true,
 }));
 App.use(Express.json());
-App.use(Express.static(Path.join(__dirname, 'frontend', 'dist')));
 App.use(CookieParser());
 App.use('/api', AuthRoute);
 App.use('/api', PostRoute);
+App.use(Express.static(Path.join(__dirname, 'frontend', 'dist')));
+App.use((req, res) => {
+  res.sendFile(Path.join(__dirname, 'frontend', 'dist', 'index.html'));
+});
+
 
 async function Start() {
   try {
