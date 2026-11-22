@@ -15,7 +15,7 @@ function Logout() {
 
 const HandleLogout = async () => {
     try {
-        await axios.post('http://localhost:4000/api/logout',
+        await axios.post('./api/logout',
         {}, {withCredentials: true});
         SetIsLoggedIn(false);
         window.location.href= '/login';
