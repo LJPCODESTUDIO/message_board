@@ -5,7 +5,7 @@ on:
     branches:
       - 'main'
 jobs:
-  test-tailscale:
+  test-ssh:
     runs-on: ubuntu-latest
     steps:
     - name: Connect to Tailnet
@@ -14,7 +14,22 @@ jobs:
         oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
         oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
         tags: tag:gar
-    - name: Test connectivity to server
-      uses: tailscale/github-action@v4
-      with:
-        ping: ${{ secrets.SERVER_IP }}
+        ping: ${{ secrets.SSH_IP }}
+    - name: Configure SSH
+      env:
+        SSH_USER: ${{ secrets.SSH_USER }}
+        SSH_KEY: ${{ secrets.SSH_KEY }}
+        SSH_HOST: ${{ secrets.SSH_IP }}
+        SSH_PORT: ${{ secrets.SSH_PORT }}
+      run: |
+        mkdir -p ~/.ssh/
+        echo "$SSH_KEY" > ~/.ssh/external-machine.key
+        chmod 600 ~/.ssh/external-machine.key
+        cat >>~/.ssh/config <<END
+        Host external-machine
+          HostName $SSH_HOST
+          User $SSH_USER
+          Port $SSH_PORT
+          IdentityFile ~/.ssh/external-machine.key
+          StrictHostKeyChecking no
+        END
