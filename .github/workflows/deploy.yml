@@ -1,11 +1,11 @@
-name: Tailscale Test
+name: Deploy
 on:
   workflow_dispatch:
   push:
     branches:
       - 'main'
 jobs:
-  test-ssh:
+  deploy:
     runs-on: ubuntu-latest
     steps:
     - name: Connect to Tailnet
@@ -33,3 +33,9 @@ jobs:
           IdentityFile ~/.ssh/external-machine.key
           StrictHostKeyChecking no
         END
+    - name: Deploy to server
+      run: |
+        ssh external-machine << EOF
+          cd ~/sites/message_board/blue_env
+          bash deploy.sh
+        EOF
