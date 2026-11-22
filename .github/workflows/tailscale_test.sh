@@ -1,8 +1,9 @@
 name: Tailscale Test
 on:
+  workflow_dispatch:
   push:
     branches:
-      - 'testing-deploy'
+      - 'main'
 jobs:
   test-tailscale:
     runs-on: ubuntu-latest
