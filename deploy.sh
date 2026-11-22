@@ -13,7 +13,7 @@ TARGET_DIR=$BLUE_DIR
 OLD_NAME=$GREEN_NAME
 
 echo "Checking active environment"
-if [ pm2 pid $TARGET_NAME | grep -q '.' ]; then
+if pm2 pid $TARGET_NAME | grep -q "."; then
   TARGET_NAME=$GREEN_NAME
   TARGET_DIR=$GREEN_DIR
   OLD_NAME=$BLUE_NAME
