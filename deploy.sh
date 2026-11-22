@@ -13,13 +13,14 @@ TARGET_DIR=$BLUE_DIR
 OLD_NAME=$GREEN_NAME
 
 echo "Checking active environment"
+
 if pm2 pid $TARGET_NAME | grep -q "."; then
   TARGET_NAME=$GREEN_NAME
   TARGET_DIR=$GREEN_DIR
   OLD_NAME=$BLUE_NAME
 fi
 
-echo "Pulling latest code into target environment ($TARGET_DIR)..."
+echo "Pulling latest code into target environment ($TARGET_NAME)..."
 cd $TARGET_DIR
 git pull $GITHUB_REPO
 
@@ -28,13 +29,13 @@ npm ci
 npm run build
 
 echo "Starting new environment..."
-pm2 delete $TARGET_NAME
-pm2 start server.js -n "$TARGET_NAME"
+pm2 delete $TARGET_NAME >> /tmp/silence
+pm2 start server.js -n "$TARGET_NAME" >> /tmp/silence
 
 sleep 5 # Give the server a chance to start
 
 echo "Checking target environment health..."
-STATUS_CODE = $(curl -s -o /dev/null -w "%{http_code}" http://localhost:$PORT)
+STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$PORT)
 
 if [ "$STATUS_CODE" -ne 200 ]; then
   echo "Target environment health check failed with status code: $STATUS_CODE"
