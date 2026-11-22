@@ -36,6 +36,6 @@ jobs:
     - name: Deploy to server
       run: |
         ssh external-machine << EOF
-          cd ~/sites/message_board/blue_env
+          cd ~/sites/message_board
           bash deploy.sh
         EOF

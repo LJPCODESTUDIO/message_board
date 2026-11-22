@@ -2,8 +2,8 @@
 
 # Configuration
 set -a && source .env && set +a
-BLUE_DIR="../blue_env"
-GREEN_DIR="../green_env"
+BLUE_DIR="./blue_env"
+GREEN_DIR="./green_env"
 BLUE_NAME="message-board-blue" # The process name for the blue environment
 GREEN_NAME="message-board-green" # The process name for the green environment
 GITHUB_REPO="https://github.com/LJPCODESTUDIO/message_board.git"
