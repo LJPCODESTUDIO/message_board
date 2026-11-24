@@ -88,12 +88,49 @@ module.exports.Logout = async (req, res, next) => {
         success: true
     });
 
-    } catch {
+    } catch (error){
         console.error(error);
         return res.status(500).json({ message: error.message });
     }
 }
 
+module.exports.ChangePassword = async (req, res, next) => {
+    try {
+        const { OldPassword, NewPassword } = req.body;
+        const FindUser = await User.findOne({ _id: req.CurrUser._id })
+        if (!OldPassword || !NewPassword) {
+        return res.status(400).json({ msg: "Please enter both your new and old passwords."})
+        }
+        if (!req.CurrUser?._id) {
+            return res.status(401).json({ msg: "Unauthorized."});
+        }
+        const PasswordMatch = await bcrypt.compare(OldPassword, FindUser.Password)
+        if (!PasswordMatch) {
+            return res.status(400).json({ msg: "Incorrect Password, please try again."});
+        }
+        const NewPasswordHash = await bcrypt.hash(NewPassword, 12);
+        await User.findOneAndUpdate({ _id: req.CurrUser._id}, {Password: NewPasswordHash });
+        res.json({ msg: "Password successfully updated!"})
+    } catch (err) {
+        return res.status(500).json({ msg: err.message });
+    }
+}
+
+module.exports.Profile = async (req, res) => {
+    try{
+        if (!req.CurrUser?._id) {
+            return res.status(401).json({ message: "Unauthorized."});
+        }
+        const user = await User.findById(req.CurrUser._id).select("-Password"); //gets everything but the password.
+        if (!user) {
+            return res.status(404).json({ message: "User not found"});
+        }
+        return res.json({ user })
+    } catch (err) {
+        return res.status(500).json({ message: err.message});
+    }
+
+}
 module.exports.AuthorizeAndBlock = async (req, res, next) => {
     try {
         const Token = req.cookies.token;

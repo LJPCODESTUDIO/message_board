@@ -116,6 +116,7 @@ function PostDetail({ ShowNotification }) {
   };
 
   return (
+<<<<<<< HEAD
     <div>
       <button onClick={() => Navigate('/')}>Back to Home</button>
       <div className="post-detail">
@@ -151,6 +152,14 @@ function PostDetail({ ShowNotification }) {
           </div>
         )}
       </div>
+=======
+    <div className="post-detail">
+      <h3>{PostData.Poster.Username}</h3>
+      <h1>{PostData.Title}</h1>
+      {(PermissionLevel === 2) ? <button onClick={() => { Navigate(`/edit/post/${PostData._id}`, { state: { Title: PostData.Title, Content: PostData.Content }}); }}>Edit</button> : (<></>)}
+      {(PermissionLevel > 0) ? <button className="delete-btn" onClick={HandleDelete}>Delete</button> : (<></>)}
+      <p>{PostData.Content}</p>
+>>>>>>> 368f5226ee3e6296f571071209c58ef65db19a32
     </div>
   );
 }
