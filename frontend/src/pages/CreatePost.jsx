@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 
-function CreatePost() {
+function CreatePost({ ShowNotification }) {
   const Params = useParams();
   const Location = useLocation();
   const [Title, SetTitle] = useState((Params.Id) ? Location.state.Title : '');
@@ -18,38 +18,42 @@ function CreatePost() {
 
     try {
       let IsValid = true;
-      
+
       if (Title.trim() === '') {
         IsValid = false;
         TempErrors = [...TempErrors, 'The post requires a title.'];
+        ShowNotification('The post requires a title.', 'error');
       }
 
       if (IsValid) {
         if (Action === 'Create') {
           await axios.post('/api/create/post', { Title: Title, Content: Content }, { withCredentials: true });
+          ShowNotification('Post created successfully');
         }
         else {
           await axios.put(`/api/update/post/${Params.Id}`, { Title: Title, Content: Content }, { withCredentials: true });
+          ShowNotification('Post updated successfully');
         }
-
         Navigate('/');
       }
     }
     catch (Err) {
-      switch (Err.status) {
+      switch (Err.response?.status) {
         case 401:
-          TempErrors = [...TempErrors, 'Only users that are logged in can create posts.'];
+        case 403:
+          TempErrors = [...TempErrors, Err.response?.data?.message || 'You are not authorized to perform this action.'];
           break;
         default:
-          console.error(Err);
-          TempErrors = [...TempErrors, Err.message];
+        console.error(Err);
+          TempErrors = [...TempErrors, Err.response?.data?.message || Err.message];
           break;
       }
+      ShowNotification(TempErrors[0], 'error');
     }
     finally {
       SetErrors(TempErrors);
     }
-  }
+  };
 
   return (
     <div>
