@@ -1,5 +1,6 @@
 const Mongoose = require('mongoose');
 const Post = require('../models/Post');
+const Comment = require('../models/Comment');
 
 // Utility Methods
 function GetPostResponse(P) {
@@ -118,17 +119,32 @@ module.exports.UpdatePost = async (req, res) => {
 
 // DELETE methods
 module.exports.DeletePost = async (req, res) => {
-  try {
-    const Id = req.params.Id;
-    const PostToDelete = await Post.findById(Id);
-    const HasPermission = res.CurrUser._id.equals(PostToDelete.Poster) || res.CurrUser.Role === 'admin';
-    if (!HasPermission) {
-      return res.status(401).json({ message: 'You do not have permission to delete this post.' });
+    try {
+        const Id = req.params.Id;
+        const PostToDelete = await Post.findById(Id);
+      
+        if (!PostToDelete) {
+            return res.status(404).json({
+                message: 'Post does not exist'
+            });
+        }
+      
+        const HasPermission = res.CurrUser._id.equals(PostToDelete.Poster) || res.CurrUser.Role === 'admin';
+        if (!HasPermission) {
+          return res.status(401).json({ message: 'You do not have permission to delete this post.' });
+        }
+
+        await Comment.deleteMany({ Post: Id });
+
+        await Post.findByIdAndDelete(Id);
+
+        res.json({
+            message: 'Post deleted successfully'
+        });
     }
-    const Deleted = await Post.findByIdAndDelete(Id);
-    res.json(Deleted);
-  }
-  catch (Err) {
-    res.status(400).json({ message: Err.message });
-  }
-}
+    catch (Err) {
+        res.status(400).json({
+            message: Err.message
+        });
+    }
+};

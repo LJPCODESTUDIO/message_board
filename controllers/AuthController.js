@@ -132,25 +132,39 @@ module.exports.Profile = async (req, res) => {
 
 }
 module.exports.AuthorizeAndBlock = async (req, res, next) => {
-    const Token = req.cookies.token;
+    try {
+        const Token = req.cookies.token;
 
-    if (!Token) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid Token' });
-    }
+        if (!Token) {
+            return res.status(401).json({
+                message: 'Unauthorized: Invalid Token'
+            });
+        }
 
-    const Decoded = CheckSecretToken(Token);
-    if (Decoded === null) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid Token' });
+        const Decoded = CheckSecretToken(Token);
+
+        if (!Decoded) {
+            return res.status(401).json({
+                message: 'Unauthorized: Invalid Token'
+            });
+        }
+
+        res.CurrUser = await User.findById(Decoded.id);
+
+        if (!res.CurrUser) {
+            return res.status(401).json({
+                message: 'User does not exist'
+            });
+        }
+
+        next();
     }
-    const FindUser = await User.findById(Decoded.id);
-    if (!FindUser) {
-        return res.status(401).json({ message: 'Unauthorize: User not found'});
+    catch (Err) {
+        res.status(500).json({
+            message: Err.message
+        });
     }
-    
-    res.CurrUser = FindUser;
-    req.CurrUser = FindUser;
-    next();
-}
+};
 
 module.exports.AuthorizeAndPass = async (req, res, next) => {
     const Token = req.cookies.token;
@@ -169,3 +183,4 @@ module.exports.AuthorizeAndPass = async (req, res, next) => {
     req.CurrUser = await User.findById(Decoded.id);
     next();
 }
+
