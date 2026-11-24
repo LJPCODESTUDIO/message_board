@@ -95,20 +95,39 @@ module.exports.Logout = async (req, res, next) => {
 }
 
 module.exports.AuthorizeAndBlock = async (req, res, next) => {
-    const Token = req.cookies.token;
+    try {
+        const Token = req.cookies.token;
 
-    if (!Token) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid Token' });
-    }
+        if (!Token) {
+            return res.status(401).json({
+                message: 'Unauthorized: Invalid Token'
+            });
+        }
 
-    const Decoded = CheckSecretToken(Token);
-    if (Decoded === null) {
-        return res.status(401).json({ message: 'Unauthorized: Invalid Token' });
+        const Decoded = CheckSecretToken(Token);
+
+        if (!Decoded) {
+            return res.status(401).json({
+                message: 'Unauthorized: Invalid Token'
+            });
+        }
+
+        res.CurrUser = await User.findById(Decoded.id);
+
+        if (!res.CurrUser) {
+            return res.status(401).json({
+                message: 'User does not exist'
+            });
+        }
+
+        next();
     }
-    
-    res.CurrUser = await User.findById(Decoded.id);
-    next();
-}
+    catch (Err) {
+        res.status(500).json({
+            message: Err.message
+        });
+    }
+};
 
 module.exports.AuthorizeAndPass = async (req, res, next) => {
     const Token = req.cookies.token;
@@ -127,3 +146,4 @@ module.exports.AuthorizeAndPass = async (req, res, next) => {
     req.CurrUser = await User.findById(Decoded.id);
     next();
 }
+
