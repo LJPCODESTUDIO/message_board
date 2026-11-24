@@ -23,36 +23,49 @@ function PostDetail({ ShowNotification }) {
   const Navigate = useNavigate();
   const Params = useParams();
 
+  const FetchPostData = useCallback(async () => {
+    try {
+      const PostRes = await axios.get(`/api/post/${Params.Id}`);
+      SetPostData(PostRes.data);
+    }
+    catch (Err) {
+      console.error(Err);
+      ShowNotification('Failed to load post', 'error');
+    }
+  }, [Params.Id, ShowNotification]);
+
   const FetchComments = useCallback(async () => {
-    const Response = await axios.get(`/api/comments/${Params.Id}`);
-    SetComments(Response.data);
-  }, [Params.Id]);
+    try {
+      const Response = await axios.get(`/api/comments/${Params.Id}`);
+      SetComments(Response.data);
+    }
+    catch (Err) {
+      console.error(Err);
+      ShowNotification('Failed to load comments', 'error');
+    }
+  }, [Params.Id, ShowNotification]);
+
+  const FetchPermissionLevel = useCallback(async () => {
+    try {
+      const PermissionRes = await axios.get(`/api/post/${Params.Id}/permission-level`, { withCredentials: true });
+      SetPermissionLevel(PermissionRes.data.Level);
+    }
+    catch (Err) {
+      if (Err.status === 401) return; 
+      console.error(Err);
+      ShowNotification('Failed to get permission level', 'error');
+    }
+  }, [Params.Id, ShowNotification]);
 
   useEffect(() => {
-    const LoadData = async () => {
-      try {
-        const PostRes = await axios.get(`/api/post/${Params.Id}`);
-        SetPostData(PostRes.data);
-        await FetchComments();
-        
-        SetPermissionLevel(0);
-        try {
-          const PermissionRes = await axios.get(`/api/post/${Params.Id}/permission-level`, { withCredentials: true });
-          SetPermissionLevel(PermissionRes.data.Level);
-        }
-        catch (Err) {
-          if (Err.response?.status !== 401) {
-            console.error(Err);
-          }
-        }
-      }
-      catch (Err) {
-        console.error(Err);
-        ShowNotification('Failed to load post', 'error');
-      }
-    };
-    LoadData();
-  }, [Params.Id, FetchComments, ShowNotification]);
+    const Controller = new AbortController();
+
+    FetchPostData();
+    FetchComments();
+    FetchPermissionLevel();
+    
+    return Controller.abort();
+  }, [FetchPostData, FetchComments, FetchPermissionLevel]);
 
   // Delete a post
   const HandleDelete = async () => {
