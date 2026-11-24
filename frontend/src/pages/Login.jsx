@@ -3,22 +3,39 @@ import { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 
-function Login() {
+function Login({ ShowNotification }) {
     const [Email, SetEmail] = useState();
     const [Password, SetPassword] = useState();
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // so the browser accepts the cookie
-        axios.post('/api/login', {Email, Password}, { withCredentials: true })  
-        .then(result => {console.log(result)
-            if(result.data.success){
-                navigate('/');
+
+        try {
+            const Response = await axios.post(
+                '/api/login',
+                { Email, Password },
+                { withCredentials: true }
+            );
+
+            if (Response.data.success) {
+                ShowNotification('Logged in successfully');
+             navigate('/');
             }
-        })
-        .catch(err=> console.log(err));
-    }
+         else {
+             ShowNotification(
+                    Response.data.message,
+                    'error'
+                );
+            }
+        }
+        catch (Err) {
+            ShowNotification(
+                Err.response?.data?.message || 'Login failed',
+                'error'
+            );
+        }
+    };
     return(
         <div>
             <h2>Login</h2>

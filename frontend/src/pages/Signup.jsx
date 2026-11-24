@@ -2,21 +2,33 @@ import { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 
-function Signup() {
+function Signup({ ShowNotification }) {
     const [Username, SetUsername] = useState("");
     const [Email, SetEmail] = useState("");
     const [Password, SetPassword] = useState("");
     const navigate = useNavigate();
     
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axios.post('/api/signup', {Username, Email, Password}, {WithCredentials: true})
-        .then(result => {console.log(result)
-        navigate('/');
-        })
-        .catch(err => console.log(err));
-    };
 
+        try {
+            await axios.post(
+                '/api/signup',
+                { Username, Email, Password },
+                { withCredentials: true }
+            );
+
+            ShowNotification('Account created successfully');
+
+            navigate('/');
+        }
+        catch (Err) {
+            ShowNotification(
+                Err.response?.data?.message || 'Registration failed',
+                'error'
+            );
+        }
+    };
 
 return(
     <div>

@@ -1,117 +1,134 @@
 :root {
-  font-family: Arial, Helvetica, sans-serif;
-  color: #f4f7ff;
-  background-color: #0b1736;
+  --background: #0b1736;
+  --background-secondary: #142b50;
+  --panel: #15284b;
+  --input: #0c1b37;
+  --border: #344b70;
+  --input-border: #52698e;
+  --heading: #f4f7ff;
+  --subheading: #dce9ff;
+  --text: #c5d3e8;
+  --accent: #7cdceb;
+  --placeholder: #a9b9d1;
+  --button: #4dd5e7;
+  --button-hover: #8ceaf4;
+  --button-text: #07172f;
+  --error: #ff9299;
 }
-
+:root[data-theme="light"] {
+  --background: #edf2f7;
+  --background-secondary: #dce5ef;
+  --panel: #ffffff;
+  --input: #f5f7fa;
+  --border: #bac8d8;
+  --input-border: #9aaec5;
+  --heading: #15284b;
+  --subheading: #243b55;
+  --text: #43536a;
+  --accent: #176579;
+  --placeholder: #66758a;
+  --button: #176579;
+  --button-hover: #104d5d;
+  --button-text: #ffffff;
+  --error: #b4232c;
+}
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: var(--heading);
+  background-color: var(--background);
+}
 * {
   box-sizing: border-box;
 }
-
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(135deg, #0b1736, #142b50);
-  color: #f4f7ff;
+  background: linear-gradient(135deg, var(--background), var(--background-secondary));
+  color: var(--heading);
 }
-
 #root {
   max-width: 1100px;
   margin: 0 auto;
   padding: 35px 24px;
 }
-
 h1 {
-  color: #ffffff;
+  color: var(--heading);
   font-size: 32px;
   margin-bottom: 20px;
 }
-
 h2 {
-  color: #dce9ff;
+  color: var(--subheading);
   font-size: 22px;
 }
-
 h3 {
-  color: #7cdceb;
+  color: var(--accent);
   font-size: 17px;
 }
-
 p {
-  color: #c5d3e8;
+  color: var(--text);
   line-height: 1.7;
 }
-
 a {
   display: inline-block;
-  color: #7cdceb;
+  color: var(--accent);
   text-decoration: none;
   font-weight: 600;
   margin: 6px 8px 12px 0;
 }
-
 a:hover {
-  color: #ffffff;
+  color: var(--heading);
   text-decoration: underline;
 }
-
 form {
-  background-color: #15284b;
-  border: 1px solid #344b70;
+  background-color: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 0;
   padding: 30px;
   max-width: 650px;
   margin: 30px auto;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
-
 form h1,
 form h2 {
   margin-top: 12px;
 }
-
 label {
   display: block;
-  color: #dce9ff;
+  color: var(--subheading);
   margin-bottom: 8px;
   font-weight: bold;
 }
-
 input,
 textarea {
   width: 100%;
   padding: 13px;
   margin: 8px 0 20px;
-  background-color: #0c1b37;
-  border: 1px solid #52698e;
+  background-color: var(--input);
+  border: 1px solid var(--input-border);
   border-radius: 0;
-  color: #ffffff;
+  color: var(--heading);
   font-size: 16px;
   font-family: inherit;
 }
-
 textarea {
   min-height: 180px;
   resize: vertical;
 }
-
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: #4dd5e7;
+  border-color: var(--button);
   box-shadow: 0 0 0 3px rgba(77, 213, 231, 0.2);
 }
-
 input::placeholder,
 textarea::placeholder {
-  color: #a9b9d1;
+  color: var(--placeholder);
 }
-
 button,
 .btn {
   display: inline-block;
-  background-color: #4dd5e7;
-  color: #07172f;
+  background-color: var(--button);
+  color: var(--button-text);
   padding: 12px 22px;
   border: none;
   border-radius: 0;
@@ -121,49 +138,41 @@ button,
   margin: 8px 8px 8px 0;
   transition: background-color 0.2s, transform 0.2s;
 }
-
 button:hover,
 .btn:hover {
-  background-color: #8ceaf4;
-  color: #07172f;
+  background-color: var(--button-hover);
+  color: var(--button-text);
   transform: translateY(-2px);
   text-decoration: none;
 }
-
 button:focus-visible,
 a:focus-visible,
 .btn:focus-visible {
-  outline: 3px solid #ffffff;
+  outline: 3px solid var(--heading);
   outline-offset: 3px;
 }
-
 .post-card {
-  background-color: #15284b;
-  border: 1px solid #344b70;
+  background-color: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 0;
   padding: 24px;
   margin: 20px 0;
   transition: transform 0.2s, border-color 0.2s;
 }
-
 .post-card:hover {
-  border-color: #4dd5e7;
+  border-color: var(--button);
   transform: translateY(-3px);
 }
-
 .post-card h1 {
   font-size: 24px;
   margin: 10px 0;
 }
-
 .post-card h3 {
   margin: 0;
 }
-
 .post-card p {
   margin-bottom: 0;
 }
-
 .post-card button {
   display: block;
   width: 100%;
@@ -175,64 +184,208 @@ a:focus-visible,
   padding: 0;
   margin: 0;
 }
-
 .post-card button:hover {
   background: transparent;
   transform: none;
 }
-
 .post-card button h1 {
-  color: #ffffff;
+  color: var(--heading);
 }
-
 .post-card button p {
-  color: #c5d3e8;
+  color: var(--text);
 }
-
 .post-detail {
-  background-color: #15284b;
-  border: 1px solid #344b70;
+  background-color: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 0;
   padding: 30px;
   margin-top: 30px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
-
 .post-detail h1 {
   margin-top: 12px;
 }
-
 .post-detail p {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
-
 .delete-btn {
   background-color: #f26d75;
   color: #101b33;
   border-radius: 0;
 }
-
 .delete-btn:hover {
-  background-color: #ff9299;
+  background-color: var(--error);
   color: #101b33;
 }
-
 ul {
-  color: #ff9299;
+  color: var(--error);
 }
-
 @media (max-width: 600px) {
   #root {
     padding: 20px 14px;
   }
-
   form,
   .post-detail {
     padding: 20px;
   }
-
   h1 {
     font-size: 26px;
   }
+}
+.comments-section {
+  margin-top: 20px;
+  padding: 12px 18px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+}
+.comments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.comments-header h2 {
+  font-size: 16px;
+  margin: 0;
+}
+.view-comments-btn {
+  font-size: 13px;
+  padding: 8px 14px;
+  margin: 0;
+}
+.comments-content {
+  margin-top: 15px;
+  border-top: 1px solid var(--border);
+}
+.comment-card {
+  background: var(--input);
+  border: 1px solid var(--border);
+  padding: 12px;
+  margin: 10px 0;
+}
+.comment-card h3 {
+  font-size: 14px;
+  margin: 0;
+}
+.comment-card p {
+  font-size: 14px;
+  margin: 5px 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.comment-card button {
+  font-size: 12px;
+  padding: 6px 12px;
+}
+.comments-section form {
+  max-width: 100%;
+  padding: 15px;
+  margin: 15px 0 0;
+  box-shadow: none;
+}
+.comments-section textarea {
+  min-height: 70px;
+  font-size: 14px;
+}
+.theme-toggle {
+  display: block;
+  margin-left: auto;
+}
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  padding: 12px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: calc(100% - 40px);
+}
+.notification.success {
+  background: #dcefe0;
+  color: #226b38;
+}
+.notification.error {
+  background: #f9dede;
+  color: #a32626;
+}
+.notification button {
+  background: transparent;
+  color: inherit;
+  border: 1px solid;
+  padding: 6px;
+}
+.speech-controls {
+  border-top: 1px solid var(--border);
+  margin-top: 15px;
+  padding-top: 10px;
+}
+.top-controls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.top-controls .theme-toggle {
+  margin: 0;
+}
+.notification-container {
+  position: relative;
+}
+.notification-btn {
+  font-size: 14px;
+  padding: 10px 15px;
+  margin: 0;
+}
+.notification-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 350px;
+  max-width: 85vw;
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 15px;
+  margin-top: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+}
+.notification-panel h2 {
+  font-size: 18px;
+  margin: 0 0 15px;
+}
+.notification-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--input);
+  color: var(--text);
+  border: 1px solid var(--border);
+  padding: 12px;
+  margin: 8px 0;
+}
+.notification-item:hover {
+  background: var(--panel);
+  border-color: var(--accent);
+  transform: none;
+}
+.notification-item p {
+  font-size: 14px;
+  margin: 0 0 8px;
+}
+.notification-item small {
+  color: var(--text);
+  font-size: 11px;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
