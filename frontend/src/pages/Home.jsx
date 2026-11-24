@@ -30,12 +30,8 @@ function Home({ ShowNotification }) {
 
   return (
     <div>
-<<<<<<< HEAD
       <Logout ShowNotification={ShowNotification} />
-=======
-      <Logout />
       <Link to='/profile'>Profile</Link>
->>>>>>> 368f5226ee3e6296f571071209c58ef65db19a32
       <br />
       {getCookie('token') !== '' ? (
         <Link to='/create/post'>Create Post</Link>
