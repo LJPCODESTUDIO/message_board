@@ -14,8 +14,8 @@ function GetPostResponse(P) {
           _id: P.Poster._id,
           Username: P.Poster.Username
         },
-        CreationDate: C.CreationDate,
-        LastEdited: C.LastEdited
+        CreationDate: P.CreationDate,
+        LastEdited: P.LastEdited
       }
 }
 
@@ -45,6 +45,7 @@ module.exports.GetPosts = async (req, res) => {
     res.json(PostsForClient);
   }
   catch (Err) {
+    console.error(Err);
     res.status(500).json({ message: Err.message });
   }
 }

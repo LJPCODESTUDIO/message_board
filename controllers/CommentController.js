@@ -30,13 +30,14 @@ module.exports.GetComments = async (req, res) => {
         .sort({ CreationDate: 'asc' });
 
         let CleanedComments = [];
-        for (const Comment in Comments) {
+        for (let Comment of Comments) {
             CleanedComments = [...CleanedComments, GetCommentResponse(Comment)];
         }
 
         res.json(CleanedComments);
     }
     catch (Err) {
+        console.error(Err);
         res.status(500).json({
             message: Err.message
         });
