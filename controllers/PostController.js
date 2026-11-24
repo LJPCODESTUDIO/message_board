@@ -46,6 +46,10 @@ module.exports.GetPosts = async (req, res) => {
   }
 }
 
+// Permission levels for frontend display
+// 0 - No permissions
+// 1 - Delete post
+// 2 - Delete post and edit post
 module.exports.GetUserPermissionLevel = async (req, res) => {
   try {
     const Id = req.params.Id;
@@ -53,6 +57,10 @@ module.exports.GetUserPermissionLevel = async (req, res) => {
     if (FoundPost) {
       if (res.CurrUser._id.equals(FoundPost.Poster._id)) {
         return res.json({ Level: 2 });
+      }
+
+      if (res.CurrUser.Role === 'admin') {
+        return res.json({ Level: 1 })
       }
 
       return res.json({ Level: 0 });
@@ -113,8 +121,9 @@ module.exports.DeletePost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToDelete = await Post.findById(Id);
-    if (!res.CurrUser._id.equals(PostToDelete.Poster)) {
-      return res.status(401).json({ message: 'Only the original poster can delete a post' });
+    const HasPermission = res.CurrUser._id.equals(PostToDelete.Poster) || res.CurrUser.Role === 'admin';
+    if (!HasPermission) {
+      return res.status(401).json({ message: 'You do not have permission to delete this post.' });
     }
     const Deleted = await Post.findByIdAndDelete(Id);
     res.json(Deleted);

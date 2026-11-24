@@ -20,10 +20,11 @@ const UserSchema = new mongoose.Schema({
         type: String, 
         required: [true, "Password is required"]
     },
-    //Role: {
-    //    type: String,
-    //    default: "user"
-    //}, //do we want this?... could make an avatar as well, could be fun to do.
+    Role: {
+       type: String,
+       default: "user"
+    }, //do we want this?... could make an avatar as well, could be fun to do.
+    // Avatar I think is an "if possible" thing. It wouldn't be hard, but we should focus on implementing all the features first.
 
 
     IsAnonymous: { type: Boolean, default: false } // This flag is needed since anonymous profiles will still need to be stored. However we could probably just point them all to the same profile.
