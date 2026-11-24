@@ -2,8 +2,10 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Home from './pages/Home'
+import ChangePassword from './pages/ChangePassword';
 import CreatePost from './pages/CreatePost';
 import PostDetail from './pages/PostDetail';
+import Profile from './pages/Profile';
 import './App.css';
 
 function App() {
@@ -16,6 +18,8 @@ function App() {
           <Route path='/create/post' element={<CreatePost />} />
           <Route path='/edit/post/:Id' element={<CreatePost />} />
           <Route path='/post/:Id' element={<PostDetail />} />
+          <Route path='/changepassword/' element={<ChangePassword />} />
+          <Route path='/profile/' element={<Profile />} />
       </Routes>
     </BrowserRouter>
   );

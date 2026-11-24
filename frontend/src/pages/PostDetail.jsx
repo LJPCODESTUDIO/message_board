@@ -72,7 +72,7 @@ function PostDetail() {
     <div className="post-detail">
       <h3>{PostData.Poster.Username}</h3>
       <h1>{PostData.Title}</h1>
-      {(PermissionLevel > 0) ? <button onClick={() => { Navigate(`/edit/post/${PostData._id}`, { state: { Title: PostData.Title, Content: PostData.Content }}); }}>Edit</button> : (<></>)}
+      {(PermissionLevel === 2) ? <button onClick={() => { Navigate(`/edit/post/${PostData._id}`, { state: { Title: PostData.Title, Content: PostData.Content }}); }}>Edit</button> : (<></>)}
       {(PermissionLevel > 0) ? <button className="delete-btn" onClick={HandleDelete}>Delete</button> : (<></>)}
       <p>{PostData.Content}</p>
     </div>
