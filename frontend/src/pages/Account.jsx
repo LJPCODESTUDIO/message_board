@@ -2,12 +2,12 @@ import  { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 
-function Profile(){
+function Account(){
     const [User, SetUser] = useState("");
     const [Error, SetError] = useState("");
 
 useEffect(() => {
-    async function loadProfile() {
+    async function loadAccount() {
         try{
             const ProfileResponse = await axios.get("/api/profile", { withCredentials: true});
             SetUser(ProfileResponse.data.user)
@@ -17,7 +17,7 @@ useEffect(() => {
             SetError( err.response?.data?.message || "Could not load profile");
         }
         
-    }loadProfile();
+    }loadAccount();
 }, []);
 
     return (
@@ -34,4 +34,4 @@ useEffect(() => {
         
     )
 }
-export default Profile;
+export default Account;

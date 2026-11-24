@@ -116,7 +116,7 @@ module.exports.ChangePassword = async (req, res, next) => {
     }
 }
 
-module.exports.Profile = async (req, res) => {
+module.exports.Account = async (req, res) => {
     try{
         if (!req.CurrUser?._id) {
             return res.status(401).json({ message: "Unauthorized."});

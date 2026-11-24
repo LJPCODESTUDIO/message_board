@@ -5,7 +5,7 @@ import Home from './pages/Home'
 import ChangePassword from './pages/ChangePassword';
 import CreatePost from './pages/CreatePost';
 import PostDetail from './pages/PostDetail';
-import Profile from './pages/Profile';
+import Account from './pages/Account';
 import './App.css';
 
 function App() {
@@ -19,7 +19,7 @@ function App() {
           <Route path='/edit/post/:Id' element={<CreatePost />} />
           <Route path='/post/:Id' element={<PostDetail />} />
           <Route path='/changepassword/' element={<ChangePassword />} />
-          <Route path='/profile/' element={<Profile />} />
+          <Route path='/account/' element={<Account />} />
       </Routes>
     </BrowserRouter>
   );
