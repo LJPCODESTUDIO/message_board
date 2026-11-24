@@ -22,6 +22,7 @@ function Home() {
   return (
     <div>
       <Logout />
+      <Link to='/profile'>Profile</Link>
       <br />
 
       {getCookie('token') !== '' ? (

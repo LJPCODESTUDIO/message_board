@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function ChangePassword() {
     const [OldPassword, setOldPassword] = useState("");
@@ -9,7 +10,6 @@ function ChangePassword() {
 
 
 const handleSubmit = async (e) => {
-    console.log("submitting", { OldPassword, NewPassword }); //debugging
     e.preventDefault();
     setMessage('');
     setError('');
@@ -25,7 +25,7 @@ const handleSubmit = async (e) => {
         setOldPassword("");
         setNewPassword("");
     }  catch (err) {
-    console.error("changepassword failed:", err.response?.status, err.response?.data);
+    
     setError(
         err.response?.data?.message ||
         err.response?.data?.msg ||
@@ -51,6 +51,7 @@ return (
     </div>
 
     <button type="submit">Update Password</button>
+    <Link to="/profile" className="btn">Cancel</Link>
     </form>
     {Message && <p>{Message}</p>}
     {Error && <p>{Error}</p>}
