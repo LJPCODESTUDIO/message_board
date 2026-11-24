@@ -167,20 +167,27 @@ module.exports.AuthorizeAndBlock = async (req, res, next) => {
 };
 
 module.exports.AuthorizeAndPass = async (req, res, next) => {
-    const Token = req.cookies.token;
+    try {
+        const Token = req.cookies.token;
 
-    if (!Token) {
-        res.CurrUser = await Profile.findOne({ Username: 'Anonymous' });
-        return next();
+        if (!Token) {
+            res.CurrUser = await User.findOne({ Username: 'Anonymous' });
+            return next();
+        }
+
+        const Decoded = CheckSecretToken(Token);
+        if (Decoded === null) {
+            res.CurrUser = await User.findOne({ Username: 'Anonymous' });
+            return next();
+        }
+
+        res.CurrUser = await User.findById(Decoded.id);
+        next();
     }
-
-    const Decoded = CheckSecretToken(Token);
-    if (Decoded === null) {
-        req.CurrUser = await User.findOne({ Username: 'Anonymous' });
-        return next();
+    catch (Err) {
+        res.status(500).json({
+            message: Err.message
+        });
     }
-
-    req.CurrUser = await User.findById(Decoded.id);
-    next();
 }
 

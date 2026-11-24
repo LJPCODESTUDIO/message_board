@@ -19,7 +19,6 @@ function PostDetail({ ShowNotification }) {
   const [PermissionLevel, SetPermissionLevel] = useState(0);
   const [Comments, SetComments] = useState([]);
   const [CommentContent, SetCommentContent] = useState('');
-  const [CurrentUser, SetCurrentUser] = useState(null);
   const [ShowComments, SetShowComments] = useState(false);
   const Navigate = useNavigate();
   const Params = useParams();
@@ -35,11 +34,9 @@ function PostDetail({ ShowNotification }) {
         const PostRes = await axios.get(`/api/post/${Params.Id}`);
         SetPostData(PostRes.data);
         await FetchComments();
+        
         SetPermissionLevel(0);
-        SetCurrentUser(null);
         try {
-          const UserRes = { id: 0, Username: "Null" };
-          SetCurrentUser(UserRes.data);
           const PermissionRes = await axios.get(`/api/post/${Params.Id}/permission-level`, { withCredentials: true });
           SetPermissionLevel(PermissionRes.data.Level);
         }
@@ -81,7 +78,7 @@ function PostDetail({ ShowNotification }) {
       return;
     }
     try {
-      await axios.post(`/api/create/comment/${Params.Id}`, { Content: CommentContent }, { withCredentials: true });
+      await axios.post(`/api/create/comment/${Params.Id}`, { Content: CommentContent, IsParentPost: true }, { withCredentials: true });
       SetCommentContent('');
       ShowNotification('Comment created successfully');
     }
@@ -121,11 +118,14 @@ function PostDetail({ ShowNotification }) {
       <div className="post-detail">
         <h3>{PostData.Poster.Username}</h3>
         <h1>{PostData.Title}</h1>
+
         {(PermissionLevel > 0) ? <button onClick={() => { Navigate(`/edit/post/${PostData._id}`, { state: { Title: PostData.Title, Content: PostData.Content } }); }}>Edit</button> : (<></>)}
         {(PermissionLevel > 0) ? <button className="delete-btn" onClick={HandleDelete}>Delete</button> : (<></>)}
+        
         <p>{PostData.Content}</p>
         <TextToSpeech Text={`${PostData.Title}. ${PostData.Content}`} />
       </div>
+
       <div className="comments-section">
         <div className="comments-header">
           <h2>Comments ({Comments.length})</h2>
@@ -133,21 +133,19 @@ function PostDetail({ ShowNotification }) {
             {ShowComments ? 'Hide Comments' : 'View Comments'}
           </button>
         </div>
+
         {ShowComments && (
           <div className="comments-content">
+            <form onSubmit={HandleComment}>
+              <label htmlFor="comment">Write a Comment</label>
+              <textarea id="comment" placeholder="Enter your comment..." value={CommentContent} onChange={(e) => { SetCommentContent(e.target.value); }} />
+              <button type="submit">Add Comment</button>
+            </form>
+
             {Comments.length === 0 && <p>No comments yet.</p>}
             {Comments.map(C => (
-              <Comment key={C._id} Data={C} CurrentUser={CurrentUser} OnDelete={HandleDeleteComment} />
+              <Comment key={C._id} Data={C} OnDelete={HandleDeleteComment} ShowNotification={ShowNotification} />
             ))}
-            {CurrentUser && CurrentUser.Username !== 'anonymous' ? (
-              <form onSubmit={HandleComment}>
-                <label htmlFor="comment">Write a Comment</label>
-                <textarea id="comment" placeholder="Enter your comment..." value={CommentContent} onChange={(e) => { SetCommentContent(e.target.value); }} />
-                <button type="submit">Add Comment</button>
-              </form>
-            ) : (
-              <p>Log in to leave a comment.</p>
-            )}
           </div>
         )}
       </div>

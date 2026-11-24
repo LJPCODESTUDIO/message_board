@@ -13,7 +13,9 @@ function GetPostResponse(P) {
         Poster: {
           _id: P.Poster._id,
           Username: P.Poster.Username
-        }
+        },
+        CreationDate: C.CreationDate,
+        LastEdited: C.LastEdited
       }
 }
 

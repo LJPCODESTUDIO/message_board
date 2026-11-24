@@ -3,18 +3,21 @@ const Router = require('express').Router();
 const {
     GetComments,
     CreateComment,
-    DeleteComment
+    DeleteComment,
+    GetUserPermissionLevel
 } = require('../controllers/CommentController');
 
 const {
-    AuthorizeAndBlock
+    AuthorizeAndBlock,
+    AuthorizeAndPass
 } = require('../controllers/AuthController');
 
 Router.get('/comments/:Id', GetComments);
+Router.route('/comment/:Id/permission-level').get(AuthorizeAndBlock, GetUserPermissionLevel);
 
 Router.post(
     '/create/comment/:Id',
-    AuthorizeAndBlock,
+    AuthorizeAndPass,
     CreateComment
 );
 
