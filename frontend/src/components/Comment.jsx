@@ -4,14 +4,14 @@ import CreateComment from "./CreateComment";
 
 function Comment({ Data, OnDelete, ShowNotification }) {
     const [PermissionLevel, SetPermissionLevel] = useState(0);
-    const [Comments, SetComments] = useState([]);
-    const [CommentContent, SetCommentContent] = useState('');
+    const [Replies, SetReplies] = useState([]);
+    const [ReplyContent, SetReplyContent] = useState('');
     const [ShowReply, SetShowReply] = useState(false);
 
-    const FetchComments = useCallback(async () => {
+    const FetchReplies = useCallback(async () => {
         try {
             const Response = await axios.get(`/api/comments/${Data._id}`);
-            SetComments(Response.data);
+            SetReplies(Response.data);
         }
         catch (Err) {
             console.error(Err);
@@ -21,7 +21,7 @@ function Comment({ Data, OnDelete, ShowNotification }) {
 
     const FetchPermissionLevel = useCallback(async () => {
         try {
-            const PermissionRes = await axios.get(`/api/post/${Data._id}/permission-level`, { withCredentials: true });
+            const PermissionRes = await axios.get(`/api/comment/${Data._id}/permission-level`, { withCredentials: true });
             SetPermissionLevel(PermissionRes.data.Level);
         }
         catch (Err) {
@@ -30,36 +30,53 @@ function Comment({ Data, OnDelete, ShowNotification }) {
             ShowNotification('Failed to get permission level', 'error');
         }
     }, [Data._id, ShowNotification]);
-
+    
     useEffect(() => {
-    const Controller = new AbortController();
+        const Controller = new AbortController();
 
-    const FetchData = () => {
-            FetchComments();
+        const FetchData = () => {
+            FetchReplies();
             FetchPermissionLevel();
         };
         
         FetchData();
         return Controller.abort();
-    }, [FetchComments, FetchPermissionLevel]);
+    }, [FetchReplies, FetchPermissionLevel]);
 
     // Create a comment
     const HandleComment = async (e) => {
         e.preventDefault();
-        if (CommentContent.trim() === '') {
+        if (ReplyContent.trim() === '') {
             ShowNotification('Comment cannot be empty', 'error');
             return;
         }
         try {
-            await axios.post(`/api/create/comment/${Data._id}`, { Content: CommentContent, IsParentPost: false }, { withCredentials: true });
-            FetchComments();
-            SetCommentContent('');
+            await axios.post(`/api/create/comment/${Data._id}`, { Content: ReplyContent, IsParentPost: false }, { withCredentials: true });
+            FetchReplies();
+            SetReplyContent('');
+            SetShowReply(false);
             ShowNotification('Comment created successfully');
         }
         catch (Err) {
             console.error(Err);
             ShowNotification('Failed to create comment', 'error');
             return;
+        }
+    };
+
+    // Delete a comment
+    const HandleDeleteComment = async (Id) => {
+        if (!window.confirm('Are you sure you want to delete this comment?')) {
+            return;
+        }
+        try {
+            await axios.delete(`/api/delete/comment/${Id}`, { withCredentials: true });
+            FetchReplies();
+            ShowNotification('Comment deleted successfully');
+        }
+        catch (Err) {
+            console.error(Err);
+            ShowNotification('Failed to delete comment', 'error');
         }
     };
 
@@ -82,15 +99,15 @@ function Comment({ Data, OnDelete, ShowNotification }) {
             <button onClick={() => SetShowReply(!ShowReply)}>Reply</button>
             {ShowReply && (
                 <CreateComment
-                    CommentContent={CommentContent}
-                    SetCommentContent={SetCommentContent}
+                    CommentContent={ReplyContent}
+                    SetCommentContent={SetReplyContent}
                     HandleComment={HandleComment}
                 />
             )}
 
             <div className="comments-content">
-                {Comments.map(C => (
-                    <Comment key={C._id} Data={C} ShowNotification={ShowNotification} />
+                {Replies.map(C => (
+                    <Comment key={C._id} Data={C} OnDelete={HandleDeleteComment} ShowNotification={ShowNotification} />
                 ))}
             </div>
         </div>

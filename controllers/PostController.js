@@ -137,8 +137,7 @@ module.exports.DeletePost = async (req, res) => {
           return res.status(401).json({ message: 'You do not have permission to delete this post.' });
         }
 
-        await Comment.deleteMany({ Post: Id });
-
+        Comment.DeleteComments(PostToDelete);
         await Post.findByIdAndDelete(Id);
 
         res.json({

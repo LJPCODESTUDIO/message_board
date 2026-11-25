@@ -1,5 +1,6 @@
 const Comment = require('../models/Comment');
 const Post = require('../models/Post');
+const Mongoose = require('mongoose');
 
 // Utility Methods
 function GetCommentResponse(C) {
@@ -91,14 +92,15 @@ module.exports.DeleteComment = async (req, res) => {
                 message: 'Only the original author can delete this comment'
             });
         }
-
-        await Comment.findByIdAndDelete(req.params.Id);
+        
+        await Comment.DeleteComments(CommentToDelete);
 
         res.json({
             message: 'Comment deleted successfully'
         });
     }
     catch (Err) {
+        console.error(Err);
         res.status(400).json({
             message: Err.message
         });
