@@ -129,12 +129,19 @@ module.exports.AddLikeToPost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToUpdate = await Post.findById(Id);
+    let LikedPosts = req.cookies.LikedPosts;
 
     if (!PostToUpdate) {
       return res.status(404).json({ message: 'Post does not exist' });
     }
+    if (LikedPosts.includes(Id)) {
+      return res.status(400).json({ message: 'You have already liked this post', success: false });
+    }
 
     await Post.findByIdAndUpdate(Id, { Likes: PostToUpdate.Likes + 1 });
+
+    LikedPosts = [...LikedPosts, Id];
+    res.cookie('LikedPosts', LikedPosts);
     res.json({ message: 'Added like to post', success: true });
   }
   catch(Err) {
@@ -146,9 +153,13 @@ module.exports.RemoveLikeFromPost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToUpdate = await Post.findById(Id);
+    let LikedPosts = req.cookies.LikedPosts;
 
     if (!PostToUpdate) {
       return res.status(404).json({ message: 'Post does not exist' });
+    }
+    if (!LikedPosts.includes(Id)) {
+      return res.status(400).json({ message: 'You have not liked this post', success: false });
     }
     
     if (PostToUpdate.Likes < 0) {
@@ -156,6 +167,9 @@ module.exports.RemoveLikeFromPost = async (req, res) => {
     }
 
     await Post.findByIdAndUpdate(Id, { Likes: PostToUpdate.Likes - 1 });
+
+    LikedPosts = LikedPosts.filter(P => P !== Id);
+    res.cookie('LikedPosts', LikedPosts);
     res.json({ message: 'Removed like from post', success: true });
   }
   catch(Err) {
@@ -167,12 +181,19 @@ module.exports.AddDislikeToPost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToUpdate = await Post.findById(Id);
+    let DislikedPosts = req.cookies.DislikedPosts;
 
     if (!PostToUpdate) {
       return res.status(404).json({ message: 'Post does not exist' });
     }
+    if (DislikedPosts.includes(Id)) {
+      return res.status(400).json({ message: 'You have already disliked this post', success: false });
+    }
 
     await Post.findByIdAndUpdate(Id, { Dislikes: PostToUpdate.Dislikes + 1 });
+
+    DislikedPosts = [...DislikedPosts, Id];
+    res.cookie('DislikedPosts', DislikedPosts);
     res.json({ message: 'added dislike to post', success: true });
   }
   catch(Err) {
@@ -184,9 +205,13 @@ module.exports.RemoveDislikeFromPost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToUpdate = await Post.findById(Id);
+    let DislikedPosts = req.cookies.DislikedPosts;
 
     if (!PostToUpdate) {
       return res.status(404).json({ message: 'Post does not exist' });
+    }
+    if (!DislikedPosts.includes(Id)) {
+      return res.status(400).json({ message: 'You have not disliked this post', success: false });
     }
     
     if (PostToUpdate.Dislikes < 0) {
@@ -194,6 +219,9 @@ module.exports.RemoveDislikeFromPost = async (req, res) => {
     }
 
     await Post.findByIdAndUpdate(Id, { Dislikes: PostToUpdate.Dislikes - 1 });
+
+    DislikedPosts = DislikedPosts.filter(P => P !== Id);
+    res.cookie('DislikedPosts', DislikedPosts);
     res.json({ message: 'Removed dislike from post', success: true });
   }
   catch(Err) {
