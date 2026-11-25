@@ -135,13 +135,13 @@ module.exports.Account = async (req, res) => {
 
 module.exports.Profile = async (req, res) => {
     try {
-        const FoundUser = User.findById(req.params.Id);
+        const FoundUser = await User.findById(req.params.Id);
 
         if (!FoundUser) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        return res.json({
+        res.json({
             _id: FoundUser._id,
             Username: FoundUser.Username,
             Role: FoundUser.Role
