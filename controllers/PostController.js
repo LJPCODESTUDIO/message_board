@@ -13,7 +13,9 @@ function GetPostResponse(P) {
         Poster: {
           _id: P.Poster._id,
           Username: P.Poster.Username
-        }
+        },
+        CreationDate: P.CreationDate,
+        LastEdited: P.LastEdited
       }
 }
 
@@ -43,6 +45,7 @@ module.exports.GetPosts = async (req, res) => {
     res.json(PostsForClient);
   }
   catch (Err) {
+    console.error(Err);
     res.status(500).json({ message: Err.message });
   }
 }
@@ -134,8 +137,7 @@ module.exports.DeletePost = async (req, res) => {
           return res.status(401).json({ message: 'You do not have permission to delete this post.' });
         }
 
-        await Comment.deleteMany({ Post: Id });
-
+        Comment.DeleteComments(PostToDelete);
         await Post.findByIdAndDelete(Id);
 
         res.json({
