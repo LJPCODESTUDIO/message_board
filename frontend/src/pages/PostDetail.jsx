@@ -60,10 +60,13 @@ function PostDetail({ ShowNotification }) {
   useEffect(() => {
     const Controller = new AbortController();
 
-    FetchPostData();
-    FetchComments();
-    FetchPermissionLevel();
+    const FetchData = () => {
+      FetchPostData();
+      FetchComments();
+      FetchPermissionLevel();
+    };
     
+    FetchData();
     return Controller.abort();
   }, [FetchPostData, FetchComments, FetchPermissionLevel]);
 

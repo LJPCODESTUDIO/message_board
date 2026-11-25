@@ -1,28 +1,4 @@
-import { useState } from "react";
-import axios from "axios";
-
-function CreateComment({ParentId, IsParentPost, ShowNotification}) {
-  const [CommentContent, SetCommentContent] = useState('');
-
-  // Create a comment
-  const HandleComment = async (e) => {
-    e.preventDefault();
-    if (CommentContent.trim() === '') {
-      ShowNotification('Comment cannot be empty', 'error');
-      return;
-    }
-    try {
-      await axios.post(`/api/create/comment/${ParentId}`, { Content: CommentContent, IsParentPost: IsParentPost }, { withCredentials: true });
-      SetCommentContent('');
-      ShowNotification('Comment created successfully');
-    }
-    catch (Err) {
-      console.error(Err);
-      ShowNotification('Failed to create comment', 'error');
-      return;
-    }
-  };
-
+function CreateComment({HandleComment, CommentContent, SetCommentContent}) {
   return (
     <form onSubmit={HandleComment}>
       <label htmlFor="comment">Write a Comment</label>

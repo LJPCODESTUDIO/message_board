@@ -5,28 +5,63 @@ import CreateComment from "./CreateComment";
 function Comment({ Data, OnDelete, ShowNotification }) {
     const [PermissionLevel, SetPermissionLevel] = useState(0);
     const [Comments, SetComments] = useState([]);
+    const [CommentContent, SetCommentContent] = useState('');
     const [ShowReply, SetShowReply] = useState(false);
 
     const FetchComments = useCallback(async () => {
-        const Response = await axios.get(`/api/comments/${Data._id}`);
-        SetComments(Response.data);
-    }, [Data._id]);
+        try {
+            const Response = await axios.get(`/api/comments/${Data._id}`);
+            SetComments(Response.data);
+        }
+        catch (Err) {
+            console.error(Err);
+            ShowNotification('Failed to load comments', 'error');
+        }
+    }, [Data._id, ShowNotification]);
+
+    const FetchPermissionLevel = useCallback(async () => {
+        try {
+            const PermissionRes = await axios.get(`/api/post/${Data._id}/permission-level`, { withCredentials: true });
+            SetPermissionLevel(PermissionRes.data.Level);
+        }
+        catch (Err) {
+            if (Err.status === 401) return; 
+            console.error(Err);
+            ShowNotification('Failed to get permission level', 'error');
+        }
+    }, [Data._id, ShowNotification]);
 
     useEffect(() => {
-        const LoadData = async () => {
-            try {
-                SetPermissionLevel(0);
-                const PermissionRes = await axios.get(`/api/comment/${Data._id}/permission-level`, { withCredentials: true });
-                SetPermissionLevel(PermissionRes.data.Level);
+    const Controller = new AbortController();
 
-                await FetchComments();
-            }
-            catch (Err) {
-                console.error(Err);
-            }
+    const FetchData = () => {
+            FetchComments();
+            FetchPermissionLevel();
         };
-        LoadData();
-    }, [Data._id]);
+        
+        FetchData();
+        return Controller.abort();
+    }, [FetchComments, FetchPermissionLevel]);
+
+    // Create a comment
+    const HandleComment = async (e) => {
+        e.preventDefault();
+        if (CommentContent.trim() === '') {
+            ShowNotification('Comment cannot be empty', 'error');
+            return;
+        }
+        try {
+            await axios.post(`/api/create/comment/${Data._id}`, { Content: CommentContent, IsParentPost: false }, { withCredentials: true });
+            FetchComments();
+            SetCommentContent('');
+            ShowNotification('Comment created successfully');
+        }
+        catch (Err) {
+            console.error(Err);
+            ShowNotification('Failed to create comment', 'error');
+            return;
+        }
+    };
 
     return (
         <div className="comment-card">
@@ -47,9 +82,9 @@ function Comment({ Data, OnDelete, ShowNotification }) {
             <button onClick={() => SetShowReply(!ShowReply)}>Reply</button>
             {ShowReply && (
                 <CreateComment
-                    ParentId={Data._id}
-                    IsParentPost={false}
-                    ShowNotification={ShowNotification}
+                    CommentContent={CommentContent}
+                    SetCommentContent={SetCommentContent}
+                    HandleComment={HandleComment}
                 />
             )}
 
