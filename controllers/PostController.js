@@ -129,7 +129,7 @@ module.exports.AddLikeToPost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToUpdate = await Post.findById(Id);
-    let LikedPosts = req.cookies.LikedPosts;
+    let LikedPosts = req.cookies.LikedPosts || [];
 
     if (!PostToUpdate) {
       return res.status(404).json({ message: 'Post does not exist' });
@@ -145,6 +145,7 @@ module.exports.AddLikeToPost = async (req, res) => {
     res.json({ message: 'Added like to post', success: true });
   }
   catch(Err) {
+    console.error(Err);
     res.status(400).json({ message: Err.message });
   }
 }
@@ -153,7 +154,7 @@ module.exports.RemoveLikeFromPost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToUpdate = await Post.findById(Id);
-    let LikedPosts = req.cookies.LikedPosts;
+    let LikedPosts = req.cookies.LikedPosts || [];
 
     if (!PostToUpdate) {
       return res.status(404).json({ message: 'Post does not exist' });
@@ -173,6 +174,7 @@ module.exports.RemoveLikeFromPost = async (req, res) => {
     res.json({ message: 'Removed like from post', success: true });
   }
   catch(Err) {
+    console.error(Err);
     res.status(400).json({ message: Err.message });
   }
 }
@@ -181,7 +183,7 @@ module.exports.AddDislikeToPost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToUpdate = await Post.findById(Id);
-    let DislikedPosts = req.cookies.DislikedPosts;
+    let DislikedPosts = req.cookies.DislikedPosts || [];
 
     if (!PostToUpdate) {
       return res.status(404).json({ message: 'Post does not exist' });
@@ -197,6 +199,7 @@ module.exports.AddDislikeToPost = async (req, res) => {
     res.json({ message: 'added dislike to post', success: true });
   }
   catch(Err) {
+    console.error(Err);
     res.status(400).json({ message: Err.message });
   }
 }
@@ -205,7 +208,7 @@ module.exports.RemoveDislikeFromPost = async (req, res) => {
   try {
     const Id = req.params.Id;
     const PostToUpdate = await Post.findById(Id);
-    let DislikedPosts = req.cookies.DislikedPosts;
+    let DislikedPosts = req.cookies.DislikedPosts || [];
 
     if (!PostToUpdate) {
       return res.status(404).json({ message: 'Post does not exist' });
@@ -225,6 +228,7 @@ module.exports.RemoveDislikeFromPost = async (req, res) => {
     res.json({ message: 'Removed dislike from post', success: true });
   }
   catch(Err) {
+    console.error(Err);
     res.status(400).json({ message: Err.message });
   }
 }

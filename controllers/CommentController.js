@@ -145,7 +145,7 @@ module.exports.AddLikeToComment = async (req, res) => {
   try {
     const Id = req.params.Id;
     const CommentToUpdate = await Comment.findById(Id);
-    let LikedComments = req.cookies.LikedComments;
+    let LikedComments = req.cookies.LikedComments || [];
 
     if (!CommentToUpdate) {
       return res.status(404).json({ message: 'Comment does not exist' });
@@ -169,7 +169,7 @@ module.exports.RemoveLikeFromComment = async (req, res) => {
   try {
     const Id = req.params.Id;
     const CommentToUpdate = await Comment.findById(Id);
-    let LikedComments = req.cookies.LikedComments;
+    let LikedComments = req.cookies.LikedComments || [];
 
     if (!CommentToUpdate) {
       return res.status(404).json({ message: 'Comment does not exist' });
@@ -197,7 +197,7 @@ module.exports.AddDislikeToComment = async (req, res) => {
   try {
     const Id = req.params.Id;
     const CommentToUpdate = await Comment.findById(Id);
-    let DislikedComments = req.cookies.DislikedComments;
+    let DislikedComments = req.cookies.DislikedComments || [];
 
     if (!CommentToUpdate) {
       return res.status(404).json({ message: 'Post does not exist' });
@@ -221,7 +221,7 @@ module.exports.RemoveDislikeFromComment = async (req, res) => {
   try {
     const Id = req.params.Id;
     const CommentToUpdate = await Comment.findById(Id);
-    let DislikedComments = req.cookies.DislikedComments;
+    let DislikedComments = req.cookies.DislikedComments || [];
 
     if (!CommentToUpdate) {
       return res.status(404).json({ message: 'Comment does not exist' });
@@ -236,7 +236,7 @@ module.exports.RemoveDislikeFromComment = async (req, res) => {
 
     await Comment.findByIdAndUpdate(Id, { Dislikes: CommentToUpdate.Dislikes - 1 });
 
-    DislikedComments = DilikedComments.filter(C => C !== Id);
+    DislikedComments = DislikedComments.filter(C => C !== Id);
     res.cookie('DislikedComments', DislikedComments);
     res.json({ message: 'Removed dislike from post', success: true });
   }
