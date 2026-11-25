@@ -5,7 +5,11 @@ const {
     CreateComment,
     DeleteComment,
     GetUserPermissionLevel,
-    EditComment
+    EditComment,
+    AddLikeToComment,
+    AddDislikeToComment,
+    RemoveLikeFromComment,
+    RemoveDislikeFromComment
 } = require('../controllers/CommentController');
 
 const {
@@ -23,6 +27,10 @@ Router.post(
 );
 
 Router.route('/edit/comment/:Id').put(AuthorizeAndBlock, EditComment);
+Router.route('/add/like/comment/:Id').put(AddLikeToComment);
+Router.route('/add/dislike/comment/:Id').put(AddDislikeToComment);
+Router.route('/remove/like/comment/:Id').put(RemoveLikeFromComment);
+Router.route('/remove/dislike/comment/:Id').put(RemoveDislikeFromComment);
 
 Router.delete(
     '/delete/comment/:Id',

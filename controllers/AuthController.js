@@ -118,15 +118,16 @@ module.exports.ChangePassword = async (req, res, next) => {
 
 module.exports.Account = async (req, res) => {
     try{
-        if (!req.CurrUser?._id) {
+        if (!res.CurrUser?._id) {
             return res.status(401).json({ message: "Unauthorized."});
         }
-        const user = await User.findById(req.CurrUser._id).select("-Password"); //gets everything but the password.
+        const user = await User.findById(res.CurrUser._id).select("-Password"); //gets everything but the password.
         if (!user) {
             return res.status(404).json({ message: "User not found"});
         }
         return res.json({ user })
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: err.message});
     }
 

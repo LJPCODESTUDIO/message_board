@@ -1,15 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 
-function Post(props) {
+function Post({Id, Username, Title, Content, Likes, Dislikes, OnLike, OnDislike, LikedPost, DislikedPost}) {
   const Navigate = useNavigate();
 
   return (
     <div className="post-card">
-      <button onClick={() => { Navigate(`/post/${props.Id}`)}}>
-        <h3>{props.Username}</h3>
-        <h1>{props.Title}</h1>
-        <p>{props.Content}</p>
+      <button onClick={() => { Navigate(`/post/${Id}`)}}>
+        <h3>{Username}</h3>
+        <h1>{Title}</h1>
+        <p>{Content}</p>
       </button>
+
+      <div className='post-actions'>
+        <button onClick={OnLike}>{Likes} - {LikedPost ? 'Unlike' : 'Like'}</button>
+        <button onClick={OnDislike}>{Dislikes} - {DislikedPost ? 'Undislike' : 'Dislike'}</button>
+      </div>
     </div>
   );
 }
