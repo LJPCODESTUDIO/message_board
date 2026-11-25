@@ -139,6 +139,84 @@ module.exports.EditComment = async (req, res) => {
     }
 };
 
+
+// Likes/Dislikes
+module.exports.AddLikeToComment = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const CommentToUpdate = await Comment.findById(Id);
+
+    if (!CommentToUpdate) {
+      return res.status(404).json({ message: 'Comment does not exist' });
+    }
+
+    await Comment.findByIdAndUpdate(Id, { Likes: CommentToUpdate.Likes + 1 });
+    res.json({ message: 'Added like to comment', success: true });
+  }
+  catch(Err) {
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.RemoveLikeFromComment = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const CommentToUpdate = await Comment.findById(Id);
+
+    if (!CommentToUpdate) {
+      return res.status(404).json({ message: 'Comment does not exist' });
+    }
+    
+    if (CommentToUpdate.Likes < 0) {
+      return res.status(400).json({ message: 'Likes cannot go lower than 0', success: false });
+    }
+
+    await Comment.findByIdAndUpdate(Id, { Likes: CommentToUpdate.Likes - 1 });
+    res.json({ message: 'Removed like from comment', success: true });
+  }
+  catch(Err) {
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.AddDislikeToComment = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const CommentToUpdate = await Comment.findById(Id);
+
+    if (!CommentToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+
+    await Comment.findByIdAndUpdate(Id, { Dislikes: CommentToUpdate.Dislikes + 1 });
+    res.json({ message: 'added dislike to comment', success: true });
+  }
+  catch(Err) {
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.RemoveDislikeFromComment = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const CommentToUpdate = await Comment.findById(Id);
+
+    if (!CommentToUpdate) {
+      return res.status(404).json({ message: 'Comment does not exist' });
+    }
+    
+    if (CommentToUpdate.Dislikes < 0) {
+      return res.status(400).json({ message: 'Dislikes cannot go lower than 0', success: false });
+    }
+
+    await Comment.findByIdAndUpdate(Id, { Dislikes: CommentToUpdate.Dislikes - 1 });
+    res.json({ message: 'Removed dislike from post', success: true });
+  }
+  catch(Err) {
+    res.status(400).json({ message: Err.message });
+  }
+}
+
 // Permission levels for frontend display
 // 0 - No permissions
 // 1 - Delete post

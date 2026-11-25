@@ -102,8 +102,13 @@ module.exports.CreatePost = async (req, res) => {
 module.exports.UpdatePost = async (req, res) => {
   try {
     const Id = req.params.Id;
-    const PostToUpdate = await Post.findById(Id).populate('Poster');
-    if (!res.CurrUser._id.equals(PostToUpdate.Poster._id)) {
+    const PostToUpdate = await Post.findById(Id);
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+
+    if (!Id.equals(PostToUpdate.Poster._id)) {
       return res.status(401).json({ message: 'Only the original poster can edit a post' });
     }
     
@@ -114,6 +119,82 @@ module.exports.UpdatePost = async (req, res) => {
     }
     const UpdatedPost = await Post.findByIdAndUpdate(Id, NewData, { returnDocument: 'after' });
     res.json(UpdatedPost);
+  }
+  catch(Err) {
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.AddLikeToPost = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const PostToUpdate = await Post.findById(Id);
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+
+    await Post.findByIdAndUpdate(Id, { Likes: PostToUpdate.Likes + 1 });
+    res.json({ message: 'Added like to post', success: true });
+  }
+  catch(Err) {
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.RemoveLikeFromPost = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const PostToUpdate = await Post.findById(Id);
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+    
+    if (PostToUpdate.Likes < 0) {
+      return res.status(400).json({ message: 'Likes cannot go lower than 0', success: false });
+    }
+
+    await Post.findByIdAndUpdate(Id, { Likes: PostToUpdate.Likes - 1 });
+    res.json({ message: 'Removed like from post', success: true });
+  }
+  catch(Err) {
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.AddDislikeToPost = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const PostToUpdate = await Post.findById(Id);
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+
+    await Post.findByIdAndUpdate(Id, { Dislikes: PostToUpdate.Dislikes + 1 });
+    res.json({ message: 'added dislike to post', success: true });
+  }
+  catch(Err) {
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.RemoveDislikeFromPost = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const PostToUpdate = await Post.findById(Id);
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+    
+    if (PostToUpdate.Dislikes < 0) {
+      return res.status(400).json({ message: 'Dislikes cannot go lower than 0', success: false });
+    }
+
+    await Post.findByIdAndUpdate(Id, { Dislikes: PostToUpdate.Dislikes - 1 });
+    res.json({ message: 'Removed dislike from post', success: true });
   }
   catch(Err) {
     res.status(400).json({ message: Err.message });
