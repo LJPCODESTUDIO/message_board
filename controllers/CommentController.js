@@ -125,7 +125,7 @@ module.exports.EditComment = async (req, res) => {
             });
         }
 
-        await Comment.findByIdAndUpdate(req.params.Id, { Content: req.body.Content });
+        await Comment.findByIdAndUpdate(req.params.Id, { Content: req.body.Content, LastEdited: Date.now() });
 
         res.json({
             message: 'Comment edited successfully.'
