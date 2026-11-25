@@ -132,6 +132,58 @@ module.exports.Account = async (req, res) => {
     }
 
 }
+
+module.exports.Profile = async (req, res) => {
+    try {
+        const FoundUser = User.findById(req.params.Id);
+
+        if (!FoundUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.json({
+            _id: FoundUser._id,
+            Username: FoundUser.Username,
+            Role: FoundUser.Role
+        });
+    }
+    catch (Err) {
+        console.error(Err);
+        res.status(500).json({ message: Err.message });
+    }
+}
+
+// Frontend permission level thingy
+// 0 - no permissions
+// 1 - admin permissions (currently make an account an admin)
+module.exports.GetUserPermissionLevel = async (req, res) => {
+    try {
+        if (res.CurrUser.Role === 'admin') {
+            return res.json({ Level: 1 })
+        }
+
+        return res.json({ Level: 0 });
+    }
+    catch (Err) {
+        res.status(500).json({ message: Err.message });
+    }
+}
+
+module.exports.MakeUserAdmin = async (req, res) => {
+    try {
+        if (res.CurrUser.Role !== 'admin') {
+            return res.status(403).json({ message: 'You do not have permission to do that' })
+        }
+
+        await User.findByIdAndUpdate(req.params.Id, { Role: 'admin' });
+
+        return res.json({ message: 'Succesfully made user an admin' });
+    }
+    catch (Err) {
+        res.status(500).json({ message: Err.message });
+    }
+}
+
 module.exports.AuthorizeAndBlock = async (req, res, next) => {
     try {
         const Token = req.cookies.token;

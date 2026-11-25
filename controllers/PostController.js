@@ -39,7 +39,13 @@ module.exports.GetPostById = async (req, res) => {
 
 module.exports.GetPosts = async (req, res) => {
   try {
-    const Posts = await Post.find().sort({ CreationDate: 'desc' }).populate('Poster');
+    let filter = {};
+
+    if (req.query.Poster) {
+      filter = { Poster: req.query.Poster };
+    }
+
+    const Posts = await Post.find(filter).sort({ CreationDate: 'desc' }).populate('Poster');
     const PostsForClient = Posts.map(P => { return GetPostResponse(P); });
 
     res.json(PostsForClient);

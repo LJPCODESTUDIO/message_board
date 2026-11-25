@@ -22,7 +22,7 @@ useEffect(() => {
 
     return (
         <div>
-            <h2>Profile</h2>
+            <h2>Account</h2>
             <p><strong>Username: </strong>{User?.IsAnonymous ? "Anonymous User" : User?.Username || "Anonymous User"}</p>
             <p><strong>Email:</strong>{User?.IsAnonymous? "Not shown for anonymous accounts" : User?.Email || "Not provided."}</p>
     

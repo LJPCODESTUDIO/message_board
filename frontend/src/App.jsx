@@ -11,6 +11,7 @@ import ThemeToggle from './components/ThemeToggle';
 import getCookie from './util/CookieFetcher';
 import ChangePassword from './pages/ChangePassword';
 import './App.css';
+import { Profile } from '../../controllers/AuthController';
 
 function NotificationWrapper(props) {
     useLocation();
@@ -51,6 +52,7 @@ function App() {
                 <Route path='/post/:Id' element={<PostDetail ShowNotification={ShowNotification} />} />
                 <Route path='/changepassword/' element={<ChangePassword />} />
                 <Route path='/account/' element={<Account />} />
+                <Route path='/profile/:Id' element={<Profile />} />
             </Routes>
         </BrowserRouter>
     );
