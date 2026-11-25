@@ -2,11 +2,12 @@ import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import CreateComment from "./CreateComment";
 
-function Comment({ Data, OnDelete, ShowNotification }) {
+function Comment({ Data, OnDelete, OnEdit, ShowNotification }) {
     const [PermissionLevel, SetPermissionLevel] = useState(0);
     const [Replies, SetReplies] = useState([]);
     const [ReplyContent, SetReplyContent] = useState('');
     const [ShowReply, SetShowReply] = useState(false);
+    const [ReplyAction, SetReplyAction] = useState('Comment');
 
     const FetchReplies = useCallback(async () => {
         try {
@@ -51,11 +52,18 @@ function Comment({ Data, OnDelete, ShowNotification }) {
             return;
         }
         try {
-            await axios.post(`/api/create/comment/${Data._id}`, { Content: ReplyContent, IsParentPost: false }, { withCredentials: true });
+            if (ReplyAction === 'Edit') {
+                OnEdit(Data._id, ReplyContent);
+                ShowNotification('Comment edited successfully');
+            }
+            else {
+                await axios.post(`/api/create/comment/${Data._id}`, { Content: ReplyContent, IsParentPost: false }, { withCredentials: true });
+                ShowNotification('Comment created successfully');
+            }
+            
             FetchReplies();
             SetReplyContent('');
             SetShowReply(false);
-            ShowNotification('Comment created successfully');
         }
         catch (Err) {
             console.error(Err);
@@ -80,6 +88,12 @@ function Comment({ Data, OnDelete, ShowNotification }) {
         }
     };
 
+    // Edit a comment
+    const HandleEditComment = async (Id, NewContent) => {
+        await axios.put(`/api/edit/comment/${Id}`, { Content: NewContent }, { withCredentials: true });
+        FetchReplies();
+    }
+
     return (
         <div className="comment-card">
 
@@ -95,19 +109,27 @@ function Comment({ Data, OnDelete, ShowNotification }) {
                     Delete Comment
                 </button>
             )}
+            {(PermissionLevel === 2) && (
+                <button
+                    onClick={() => {SetShowReply(!ShowReply); SetReplyAction('Edit'); SetReplyContent(Data.Content);}}
+                >
+                    Edit Comment
+                </button>
+            )}
 
-            <button onClick={() => SetShowReply(!ShowReply)}>Reply</button>
+            <button onClick={() => {SetShowReply(!ShowReply); SetReplyAction('Add'); SetReplyContent('');}}>Reply</button>
             {ShowReply && (
                 <CreateComment
                     CommentContent={ReplyContent}
                     SetCommentContent={SetReplyContent}
                     HandleComment={HandleComment}
+                    Action={ReplyAction}
                 />
             )}
 
             <div className="comments-content">
                 {Replies.map(C => (
-                    <Comment key={C._id} Data={C} OnDelete={HandleDeleteComment} ShowNotification={ShowNotification} />
+                    <Comment key={C._id} Data={C} OnDelete={HandleDeleteComment} OnEdit={HandleEditComment} ShowNotification={ShowNotification} />
                 ))}
             </div>
         </div>

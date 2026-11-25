@@ -87,16 +87,48 @@ module.exports.DeleteComment = async (req, res) => {
             });
         }
 
-        if (!res.CurrUser._id.equals(CommentToDelete.Poster)) {
+        const CheckPermission = res.CurrUser._id.equals(CommentToDelete.Poster) || res.CurrUser.Role === 'admin';
+        if (!CheckPermission) {
             return res.status(403).json({
-                message: 'Only the original author can delete this comment'
+                message: 'You do not have permission to delete this comment.'
             });
         }
         
         await Comment.DeleteComments(CommentToDelete);
 
         res.json({
-            message: 'Comment deleted successfully'
+            message: 'Comment deleted successfully.'
+        });
+    }
+    catch (Err) {
+        console.error(Err);
+        res.status(400).json({
+            message: Err.message
+        });
+    }
+};
+
+// PUT a comment
+module.exports.EditComment = async (req, res) => {
+    try {
+        const CommentToEdit = await Comment.findById(req.params.Id);
+        if (!CommentToEdit) {
+            return res.status(404).json({
+                message: 'Comment does not exist'
+            });
+        }
+
+        const CheckPermission = res.CurrUser._id.equals(CommentToEdit.Poster);
+        if (!CheckPermission) {
+            return res.status(403).json({
+                message: 'You do not have permission to edit this comment.'
+            });
+        }
+
+        await Comment.findByIdAndUpdate(req.params.Id, { Content: req.body.Content });
+
+        res.json({
+            message: 'Comment edited successfully.'
         });
     }
     catch (Err) {

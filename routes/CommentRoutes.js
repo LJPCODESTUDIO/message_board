@@ -4,7 +4,8 @@ const {
     GetComments,
     CreateComment,
     DeleteComment,
-    GetUserPermissionLevel
+    GetUserPermissionLevel,
+    EditComment
 } = require('../controllers/CommentController');
 
 const {
@@ -20,6 +21,8 @@ Router.post(
     AuthorizeAndPass,
     CreateComment
 );
+
+Router.route('/edit/comment/:Id').put(AuthorizeAndBlock, EditComment);
 
 Router.delete(
     '/delete/comment/:Id',

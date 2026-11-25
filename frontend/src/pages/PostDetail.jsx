@@ -3,6 +3,7 @@ import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import Comment from '../components/Comment';
 import TextToSpeech from '../components/TextToSpeech';
+import CreateComment from '../components/CreateComment';
 
 function PostDetail({ ShowNotification }) {
   const [PostData, SetPostData] = useState({
@@ -128,6 +129,12 @@ function PostDetail({ ShowNotification }) {
     }
   };
 
+  // Edit a comment
+  const HandleEditComment = async (Id, NewContent) => {
+    await axios.put(`/api/edit/comment/${Id}`, { Content: NewContent }, { withCredentials: true });
+    FetchComments();
+  }
+
   return (
     <div>
       <button onClick={() => Navigate('/')}>Back to Home</button>
@@ -135,7 +142,7 @@ function PostDetail({ ShowNotification }) {
         <h3>{PostData.Poster.Username}</h3>
         <h1>{PostData.Title}</h1>
 
-        {(PermissionLevel > 0) ? <button onClick={() => { Navigate(`/edit/post/${PostData._id}`, { state: { Title: PostData.Title, Content: PostData.Content } }); }}>Edit</button> : (<></>)}
+        {(PermissionLevel === 2) ? <button onClick={() => { Navigate(`/edit/post/${PostData._id}`, { state: { Title: PostData.Title, Content: PostData.Content } }); }}>Edit</button> : (<></>)}
         {(PermissionLevel > 0) ? <button className="delete-btn" onClick={HandleDelete}>Delete</button> : (<></>)}
         
         <p>{PostData.Content}</p>
@@ -152,15 +159,16 @@ function PostDetail({ ShowNotification }) {
 
         {ShowComments && (
           <div className="comments-content">
-            <form onSubmit={HandleComment}>
-              <label htmlFor="comment">Write a Comment</label>
-              <textarea id="comment" placeholder="Enter your comment..." value={CommentContent} onChange={(e) => { SetCommentContent(e.target.value); }} />
-              <button type="submit">Add Comment</button>
-            </form>
+            <CreateComment
+              HandleComment={HandleComment}
+              CommentContent={CommentContent}
+              SetCommentContent={SetCommentContent}
+              Action={'Add'}
+            />
 
             {Comments.length === 0 && <p>No comments yet.</p>}
             {Comments.map(C => (
-              <Comment key={C._id} Data={C} OnDelete={HandleDeleteComment} ShowNotification={ShowNotification} />
+              <Comment key={C._id} Data={C} OnDelete={HandleDeleteComment} OnEdit={HandleEditComment} ShowNotification={ShowNotification} />
             ))}
           </div>
         )}
