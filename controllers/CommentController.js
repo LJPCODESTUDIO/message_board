@@ -11,7 +11,8 @@ function GetCommentResponse(C) {
         Dislikes: C.Dislikes,
         Poster: {
           _id: C.Poster._id,
-          Username: C.Poster.Username
+          Username: C.Poster.Username,
+          Role: C.Poster.Role
         },
         IsParentPost: C.IsParentPost,
         Parent: C.Parent,

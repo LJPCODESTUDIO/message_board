@@ -84,6 +84,7 @@ function Home({ ShowNotification }) {
           key={P._id}
           Id={P._id}
           Username={P.Poster.Username}
+          Role={P.Poster.Role}
           Title={P.Title}
           Content={P.Content}
           Likes={P.Likes}

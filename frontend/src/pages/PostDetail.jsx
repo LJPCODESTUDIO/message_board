@@ -212,7 +212,7 @@ function PostDetail({ ShowNotification }) {
     <div>
       <button onClick={() => Navigate('/')}>Back to Home</button>
       <div className="post-detail">
-        <h3>{PostData.Poster.Username}</h3>
+        <h3>{PostData.Poster.Username} {PostData.Poster.Role === 'admin' && (<span className="user-tag">Admin</span>)}</h3>
         <h1>{PostData.Title}</h1>
 
         {(PermissionLevel === 2) ? <button onClick={() => { Navigate(`/edit/post/${PostData._id}`, { state: { Title: PostData.Title, Content: PostData.Content } }); }}>Edit</button> : (<></>)}

@@ -12,7 +12,8 @@ function GetPostResponse(P) {
         Dislikes: P.Dislikes,
         Poster: {
           _id: P.Poster._id,
-          Username: P.Poster.Username
+          Username: P.Poster.Username,
+          Role: P.Poster.Role
         },
         CreationDate: P.CreationDate,
         LastEdited: P.LastEdited

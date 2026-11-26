@@ -134,7 +134,7 @@ function Comment({ Data, OnDelete, OnEdit, OnLike, OnDislike, LikedComment, Disl
     return (
         <div className="comment-card">
 
-            <h3>{Data.Poster.Username}</h3>
+            <h3>{Data.Poster.Username} {Data.Poster.Role === 'admin' && (<span className="user-tag">Admin</span>)}</h3>
 
             <p>{Data.Content}</p>
             <button onClick={OnLike}>{Data.Likes} - {LikedComment ? 'Unlike' : 'Like'}</button>
