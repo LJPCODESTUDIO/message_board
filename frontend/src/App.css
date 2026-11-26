@@ -418,3 +418,12 @@ button:disabled {
   cursor: not-allowed;
   transform: none;
 }
+
+.user-tag {
+  background-color: var(--button);
+  color: var(--button-text);
+  text-align: center;
+  width: fit-content;
+  padding: 0.1em 0.4em;
+  font-weight: bold;
+}

@@ -11,6 +11,7 @@ import ThemeToggle from './components/ThemeToggle';
 import getCookie from './util/CookieFetcher';
 import ChangePassword from './pages/ChangePassword';
 import './App.css';
+import Profile from './pages/Profile';
 
 function NotificationWrapper(props) {
     useLocation();
@@ -38,6 +39,7 @@ function App() {
 
     return (
         <BrowserRouter>
+            <title>YAMBoard</title>
             <div className="top-controls">
                 <NotificationWrapper Message={Message} Type={Type} OnClose={CloseNotification} />
                 <ThemeToggle Theme={Theme} SetTheme={SetTheme} />
@@ -49,8 +51,9 @@ function App() {
                 <Route path='/create/post' element={<CreatePost ShowNotification={ShowNotification} />} />
                 <Route path='/edit/post/:Id' element={<CreatePost ShowNotification={ShowNotification} />} />
                 <Route path='/post/:Id' element={<PostDetail ShowNotification={ShowNotification} />} />
-                <Route path='/changepassword/' element={<ChangePassword />} />
-                <Route path='/account/' element={<Account />} />
+                <Route path='/changepassword/' element={<ChangePassword ShowNotification={ShowNotification} />} />
+                <Route path='/account/' element={<Account ShowNotification={ShowNotification} />} />
+                <Route path='/profile/:Id' element={<Profile ShowNotification={ShowNotification} />} />
             </Routes>
         </BrowserRouter>
     );
