@@ -6,7 +6,7 @@ router.post("/signup", Signup);
 router.post("/login", Login);
 router.post("/logout", Logout);
 router.post("/changepassword", AuthorizeAndBlock, ChangePassword);
-router.post('/set/role/admin/:Id', AuthorizeAndBlock, MakeUserAdmin);
+router.post('/role/admin/:Id', AuthorizeAndBlock, MakeUserAdmin);
 router.get("/account", AuthorizeAndBlock, Account);
 router.get('/profile/:Id', Profile);
 router.get('/profile/:Id/permission-level', AuthorizeAndBlock, GetUserPermissionLevel);

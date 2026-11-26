@@ -96,7 +96,7 @@ function Profile({ ShowNotification}) {
       return;
     }
     try {
-      await axios.post(`/api/set/role/admin/${Params.Id}`, {}, { withCredentials: true });
+      await axios.post(`/api/role/admin/${Params.Id}`, {}, { withCredentials: true });
       FetchUser();
     }
     catch (Err) {
