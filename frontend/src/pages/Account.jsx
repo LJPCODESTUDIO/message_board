@@ -9,7 +9,7 @@ function Account(){
 useEffect(() => {
     async function loadAccount() {
         try{
-            const ProfileResponse = await axios.get("/api/profile", { withCredentials: true});
+            const ProfileResponse = await axios.get("/api/account", { withCredentials: true});
             SetUser(ProfileResponse.data.user)
 
          

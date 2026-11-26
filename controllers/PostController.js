@@ -13,7 +13,9 @@ function GetPostResponse(P) {
         Poster: {
           _id: P.Poster._id,
           Username: P.Poster.Username
-        }
+        },
+        CreationDate: P.CreationDate,
+        LastEdited: P.LastEdited
       }
 }
 
@@ -43,6 +45,7 @@ module.exports.GetPosts = async (req, res) => {
     res.json(PostsForClient);
   }
   catch (Err) {
+    console.error(Err);
     res.status(500).json({ message: Err.message });
   }
 }
@@ -99,8 +102,13 @@ module.exports.CreatePost = async (req, res) => {
 module.exports.UpdatePost = async (req, res) => {
   try {
     const Id = req.params.Id;
-    const PostToUpdate = await Post.findById(Id).populate('Poster');
-    if (!res.CurrUser._id.equals(PostToUpdate.Poster._id)) {
+    const PostToUpdate = await Post.findById(Id);
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+
+    if (!Id.equals(PostToUpdate.Poster._id)) {
       return res.status(401).json({ message: 'Only the original poster can edit a post' });
     }
     
@@ -113,6 +121,114 @@ module.exports.UpdatePost = async (req, res) => {
     res.json(UpdatedPost);
   }
   catch(Err) {
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.AddLikeToPost = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const PostToUpdate = await Post.findById(Id);
+    let LikedPosts = req.cookies.LikedPosts || [];
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+    if (LikedPosts.includes(Id)) {
+      return res.status(400).json({ message: 'You have already liked this post', success: false });
+    }
+
+    await Post.findByIdAndUpdate(Id, { Likes: PostToUpdate.Likes + 1 });
+
+    LikedPosts = [...LikedPosts, Id];
+    res.cookie('LikedPosts', LikedPosts);
+    res.json({ message: 'Added like to post', success: true });
+  }
+  catch(Err) {
+    console.error(Err);
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.RemoveLikeFromPost = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const PostToUpdate = await Post.findById(Id);
+    let LikedPosts = req.cookies.LikedPosts || [];
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+    if (!LikedPosts.includes(Id)) {
+      return res.status(400).json({ message: 'You have not liked this post', success: false });
+    }
+    
+    if (PostToUpdate.Likes < 0) {
+      return res.status(400).json({ message: 'Likes cannot go lower than 0', success: false });
+    }
+
+    await Post.findByIdAndUpdate(Id, { Likes: PostToUpdate.Likes - 1 });
+
+    LikedPosts = LikedPosts.filter(P => P !== Id);
+    res.cookie('LikedPosts', LikedPosts);
+    res.json({ message: 'Removed like from post', success: true });
+  }
+  catch(Err) {
+    console.error(Err);
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.AddDislikeToPost = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const PostToUpdate = await Post.findById(Id);
+    let DislikedPosts = req.cookies.DislikedPosts || [];
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+    if (DislikedPosts.includes(Id)) {
+      return res.status(400).json({ message: 'You have already disliked this post', success: false });
+    }
+
+    await Post.findByIdAndUpdate(Id, { Dislikes: PostToUpdate.Dislikes + 1 });
+
+    DislikedPosts = [...DislikedPosts, Id];
+    res.cookie('DislikedPosts', DislikedPosts);
+    res.json({ message: 'added dislike to post', success: true });
+  }
+  catch(Err) {
+    console.error(Err);
+    res.status(400).json({ message: Err.message });
+  }
+}
+
+module.exports.RemoveDislikeFromPost = async (req, res) => {
+  try {
+    const Id = req.params.Id;
+    const PostToUpdate = await Post.findById(Id);
+    let DislikedPosts = req.cookies.DislikedPosts || [];
+
+    if (!PostToUpdate) {
+      return res.status(404).json({ message: 'Post does not exist' });
+    }
+    if (!DislikedPosts.includes(Id)) {
+      return res.status(400).json({ message: 'You have not disliked this post', success: false });
+    }
+    
+    if (PostToUpdate.Dislikes < 0) {
+      return res.status(400).json({ message: 'Dislikes cannot go lower than 0', success: false });
+    }
+
+    await Post.findByIdAndUpdate(Id, { Dislikes: PostToUpdate.Dislikes - 1 });
+
+    DislikedPosts = DislikedPosts.filter(P => P !== Id);
+    res.cookie('DislikedPosts', DislikedPosts);
+    res.json({ message: 'Removed dislike from post', success: true });
+  }
+  catch(Err) {
+    console.error(Err);
     res.status(400).json({ message: Err.message });
   }
 }
@@ -134,8 +250,7 @@ module.exports.DeletePost = async (req, res) => {
           return res.status(401).json({ message: 'You do not have permission to delete this post.' });
         }
 
-        await Comment.deleteMany({ Post: Id });
-
+        Comment.DeleteComments(PostToDelete);
         await Post.findByIdAndDelete(Id);
 
         res.json({

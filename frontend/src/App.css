@@ -209,6 +209,35 @@ a:focus-visible,
   white-space: pre-wrap;
   overflow-wrap: anywhere;
 }
+
+.post-actions {
+  display: flex;
+}
+.post-actions button {
+  display: inline-block;
+  background-color: var(--button);
+  color: var(--button-text);
+  padding: 12px 22px;
+  border: none;
+  border-radius: 0;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 8px 8px 8px 0;
+  transition: background-color 0.2s, transform 0.2s;
+  width: fit-content;
+}
+.post-actions button:hover {
+  background-color: var(--button-hover);
+  color: var(--button-text);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+.post-actions button:focus-visible {
+  outline: 3px solid var(--heading);
+  outline-offset: 3px;
+}
+
 .delete-btn {
   background-color: #f26d75;
   color: #101b33;

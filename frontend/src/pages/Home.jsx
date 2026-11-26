@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Post from "../components/Post";
@@ -7,31 +7,73 @@ import Logout from "../components/Logout";
 
 function Home({ ShowNotification }) {
   const [Posts, SetPosts] = useState([]);
+  const [LikedPosts, SetLikedPosts] = useState([]);
+  const [DislikedPosts, SetDislikedPosts] = useState([]);
+
+  const FetchPosts = useCallback(async (Controller) => {
+    try {
+      const Response = await axios.get('/api/posts', { signal: Controller.signal });
+      SetPosts(Response.data);
+      SetLikedPosts(getCookie('LikedPosts'));
+      SetDislikedPosts(getCookie('DislikedPosts'));
+    }
+    catch (Err) {
+      if (Err.code !== 'ERR_CANCELED') {
+        console.error(Err);
+        ShowNotification('Failed to load posts', 'error');
+      }
+    }
+  }, [SetPosts, ShowNotification]);
 
   useEffect(() => {
     const Controller = new AbortController();
 
-    const FetchPosts = async () => {
-      try {
-        const Response = await axios.get('/api/posts', { signal: Controller.signal });
-        SetPosts(Response.data);
-      }
-      catch (Err) {
-        if (Err.code !== 'ERR_CANCELED') {
-          console.error(Err);
-          ShowNotification('Failed to load posts', 'error');
-        }
-      }
-    };
+    const FetchData = () => {
+      FetchPosts(Controller);
+    }
 
-    FetchPosts();
+    FetchData();
     return () => Controller.abort();
-  }, [ShowNotification]);
+  }, [FetchPosts]);
+
+  const HandleLikePost = async (Id) => {
+    try {
+      if (LikedPosts.includes(Id)) {
+        await axios.put(`/api/remove/like/post/${Id}`, {}, { headers: { cookie: document.cookie }});
+      }
+      if (!LikedPosts.includes(Id)) {
+        await axios.put(`/api/add/like/post/${Id}`, {}, { headers: { cookie: document.cookie }});
+      }
+      const Controller = new AbortController();
+      FetchPosts(Controller);
+    }
+    catch (Err) {
+      console.error(Err);
+      ShowNotification('Failed to like post', 'error');
+    }
+  };
+
+  const HandleDislikePost = async (Id) => {
+    try {
+      if (DislikedPosts.includes(Id)) {
+        await axios.put(`/api/remove/dislike/post/${Id}`, {}, { headers: { cookie: document.cookie }});
+      }
+      if (!DislikedPosts.includes(Id)) {
+        await axios.put(`/api/add/dislike/post/${Id}`, {}, { headers: { cookie: document.cookie }});
+      }
+      const Controller = new AbortController();
+      FetchPosts(Controller);
+    }
+    catch (Err) {
+      console.error(Err);
+      ShowNotification('Failed to like post', 'error');
+    }
+  };
 
   return (
     <div>
       <Logout ShowNotification={ShowNotification} />
-      <Link to='/profile'>Profile</Link>
+      <Link to='/account'>Account</Link>
       <br />
       {getCookie('token') !== '' ? (
         <Link to='/create/post'>Create Post</Link>
@@ -46,6 +88,10 @@ function Home({ ShowNotification }) {
           Content={P.Content}
           Likes={P.Likes}
           Dislikes={P.Dislikes}
+          OnLike={() => HandleLikePost(P._id)}
+          OnDislike={() => HandleDislikePost(P._id)}
+          LikedPost={LikedPosts.includes(P._id)}
+          DislikedPost={DislikedPosts.includes(P._id)}
         />
       ))}
     </div>

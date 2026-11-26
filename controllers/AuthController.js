@@ -118,15 +118,16 @@ module.exports.ChangePassword = async (req, res, next) => {
 
 module.exports.Account = async (req, res) => {
     try{
-        if (!req.CurrUser?._id) {
+        if (!res.CurrUser?._id) {
             return res.status(401).json({ message: "Unauthorized."});
         }
-        const user = await User.findById(req.CurrUser._id).select("-Password"); //gets everything but the password.
+        const user = await User.findById(res.CurrUser._id).select("-Password"); //gets everything but the password.
         if (!user) {
             return res.status(404).json({ message: "User not found"});
         }
         return res.json({ user })
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ message: err.message});
     }
 
@@ -167,20 +168,27 @@ module.exports.AuthorizeAndBlock = async (req, res, next) => {
 };
 
 module.exports.AuthorizeAndPass = async (req, res, next) => {
-    const Token = req.cookies.token;
+    try {
+        const Token = req.cookies.token;
 
-    if (!Token) {
-        res.CurrUser = await Profile.findOne({ Username: 'Anonymous' });
-        return next();
+        if (!Token) {
+            res.CurrUser = await User.findOne({ Username: 'Anonymous' });
+            return next();
+        }
+
+        const Decoded = CheckSecretToken(Token);
+        if (Decoded === null) {
+            res.CurrUser = await User.findOne({ Username: 'Anonymous' });
+            return next();
+        }
+
+        res.CurrUser = await User.findById(Decoded.id);
+        next();
     }
-
-    const Decoded = CheckSecretToken(Token);
-    if (Decoded === null) {
-        req.CurrUser = await User.findOne({ Username: 'Anonymous' });
-        return next();
+    catch (Err) {
+        res.status(500).json({
+            message: Err.message
+        });
     }
-
-    req.CurrUser = await User.findById(Decoded.id);
-    next();
 }
 

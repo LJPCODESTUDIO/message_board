@@ -20,8 +20,6 @@ const App = Express();
 // Middleware
 // edited it for cookie credentials
 App.use(Cors({
-  origin: ["http://localhost:5173"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 }));
 App.use(Express.json());
