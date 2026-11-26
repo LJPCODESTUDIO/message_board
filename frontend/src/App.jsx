@@ -39,6 +39,7 @@ function App() {
 
     return (
         <BrowserRouter>
+            <title>YAMBoard</title>
             <div className="top-controls">
                 <NotificationWrapper Message={Message} Type={Type} OnClose={CloseNotification} />
                 <ThemeToggle Theme={Theme} SetTheme={SetTheme} />
