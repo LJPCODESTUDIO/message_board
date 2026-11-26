@@ -2,7 +2,7 @@ import axios from "axios";
 import { useCallback } from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Post from '../components/Post';
 import getCookie from "../util/CookieFetcher";
 
@@ -15,18 +15,22 @@ function Profile({ ShowNotification}) {
   const [Posts, SetPosts] = useState([]);
   const [LikedPosts, SetLikedPosts] = useState([]);
   const [DislikedPosts, SetDislikedPosts] = useState([]);
+  const [PermissionLevel, SetPermissionLevel] = useState(0);
+  const Navigate = useNavigate();
   const Params = useParams();
 
   const FetchUser = useCallback(async () => {
     try {
       const Response = await axios.get(`/api/profile/${Params.Id}`);
       SetUser(Response.data);
+      const PermissionResponse = await axios.get(`/api/profile/${Params.Id}/permission-level`);
+      SetPermissionLevel(PermissionResponse.data.Level);
     }
     catch (Err) {
       console.error(Err);
       ShowNotification('Failed to fetch user data', 'error');
     }
-  }, [SetUser, ShowNotification, Params.Id]);
+  }, [SetUser, ShowNotification, Params.Id, SetPermissionLevel]);
 
   const FetchPosts = useCallback(async () => {
     try {
@@ -87,12 +91,30 @@ function Profile({ ShowNotification}) {
     }
   };
 
+  const HandleMakeAdmin = async () => {
+    if (!window.confirm('Are you sure? This action is not easily reversed.')) {
+      return;
+    }
+    try {
+      await axios.post(`/api/set/role/admin/${Params.Id}`, {}, { withCredentials: true });
+    }
+    catch (Err) {
+      console.error(Err);
+      ShowNotification('Failed to make user an admin.', 'error');
+    }
+  }
+
   return (
     <div>
+      <button onClick={() => Navigate('/')}>Back to Home</button>
       <h2>{User.Username}'s Profile</h2>
       {User.Role === 'admin' && (<p className="user-tag">Admin</p>)}
+      {(User.Role !== 'admin' && PermissionLevel === 1) && (
+        <button onClick={HandleMakeAdmin}>Make Admin</button>
+      )}
 
       <h3>Posts by {User.Username}</h3>
+      {Posts.length === 0 && <p>There's nothing here.</p>}
       {Posts.map(P => (
         <Post
           key={P._id}
