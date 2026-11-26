@@ -97,6 +97,7 @@ function Profile({ ShowNotification}) {
     }
     try {
       await axios.post(`/api/set/role/admin/${Params.Id}`, {}, { withCredentials: true });
+      FetchUser();
     }
     catch (Err) {
       console.error(Err);
@@ -119,8 +120,7 @@ function Profile({ ShowNotification}) {
         <Post
           key={P._id}
           Id={P._id}
-          Username={P.Poster.Username}
-          Role={P.Poster.Role}
+          Poster={P.Poster}
           Title={P.Title}
           Content={P.Content}
           Likes={P.Likes}

@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import CreateComment from "./CreateComment";
 import getCookie from "../util/CookieFetcher";
@@ -134,7 +135,9 @@ function Comment({ Data, OnDelete, OnEdit, OnLike, OnDislike, LikedComment, Disl
     return (
         <div className="comment-card">
 
-            <h3>{Data.Poster.Username} {Data.Poster.Role === 'admin' && (<span className="user-tag">Admin</span>)}</h3>
+            <Link to={`/profile/${Data.Poster._id}`}>
+                <h3>{Data.Poster.Username} {Data.Poster.Username === 'admin' && (<span className="user-tag">Admin</span>)}</h3>
+            </Link>
 
             <p>{Data.Content}</p>
             <button onClick={OnLike}>{Data.Likes} - {LikedComment ? 'Unlike' : 'Like'}</button>
