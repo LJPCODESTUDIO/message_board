@@ -1,6 +1,7 @@
 const Mongoose = require('mongoose');
 const User = require('./models/User');
 const App = require('./app');
+require("dotenv").config();
 
 // Variables
 const Port = process.env.PORT || 4000;

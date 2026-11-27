@@ -1,4 +1,4 @@
-require('dotenv').config(); // loads environment variables from env file to process.env so the signing key is not handled by source code.
+require('dotenv').config({ quiet: true }); // loads environment variables from env file to process.env so the signing key is not handled by source code.
 const jwt = require('jsonwebtoken')
 
 module.exports.CreateSecretToken = (id) => { //server uses { id } to know who is making a request without needing to hit the database again.

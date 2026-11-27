@@ -6,7 +6,6 @@ const AuthRoute = require("./routes/AuthRoute");
 const PostRoute = require('./routes/PostRoute');
 const CommentRoutes = require('./routes/CommentRoutes');
 const NotificationRoute = require('./routes/NotificationRoute');
-require("dotenv").config();
 
 // Express configuration
 const App = Express();
