@@ -43,7 +43,7 @@ module.exports.Login = async (req, res, next) => {
         const {Email, Password} = req.body;
 
         if (!Email || !Password) {
-            return res.json({ message: 'All fields are required. '});
+            return res.status(400).json({ message: 'All fields are required. '});
         }
 
         const user = await User.findOne({ Email });
@@ -97,11 +97,11 @@ module.exports.Logout = async (req, res, next) => {
 module.exports.ChangePassword = async (req, res, next) => {
     try {
         const { OldPassword, NewPassword } = req.body;
-        const FindUser = await User.findOne({ _id: req.CurrUser._id })
+        const FindUser = await User.findOne({ _id: res.CurrUser._id })
         if (!OldPassword || !NewPassword) {
-        return res.status(400).json({ msg: "Please enter both your new and old passwords."})
+            return res.status(400).json({ msg: "Please enter both your new and old passwords."})
         }
-        if (!req.CurrUser?._id) {
+        if (!res.CurrUser._id) {
             return res.status(401).json({ msg: "Unauthorized."});
         }
         const PasswordMatch = await bcrypt.compare(OldPassword, FindUser.Password)
@@ -109,9 +109,10 @@ module.exports.ChangePassword = async (req, res, next) => {
             return res.status(400).json({ msg: "Incorrect Password, please try again."});
         }
         const NewPasswordHash = await bcrypt.hash(NewPassword, 12);
-        await User.findOneAndUpdate({ _id: req.CurrUser._id}, {Password: NewPasswordHash });
+        await User.findOneAndUpdate({ _id: res.CurrUser._id}, {Password: NewPasswordHash });
         res.json({ msg: "Password successfully updated!"})
     } catch (err) {
+        console.error(err);
         return res.status(500).json({ msg: err.message });
     }
 }
@@ -150,6 +151,7 @@ module.exports.Profile = async (req, res) => {
     catch (Err) {
         console.error(Err);
         res.status(500).json({ message: Err.message });
+router.get("/account", AuthorizeAndBlock, Account);
     }
 }
 
@@ -158,6 +160,12 @@ module.exports.Profile = async (req, res) => {
 // 1 - admin permissions (currently make an account an admin)
 module.exports.GetUserPermissionLevel = async (req, res) => {
     try {
+        const FoundUser = await User.findById(req.params.Id);
+
+        if (!FoundUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        
         if (res.CurrUser.Role === 'admin') {
             return res.json({ Level: 1 })
         }
@@ -173,6 +181,12 @@ module.exports.MakeUserAdmin = async (req, res) => {
     try {
         if (res.CurrUser.Role !== 'admin') {
             return res.status(403).json({ message: 'You do not have permission to do that' })
+        }
+
+        const FoundUser = await User.findById(req.params.Id);
+
+        if (!FoundUser) {
+            return res.status(404).json({ message: 'User not found' });
         }
 
         await User.findByIdAndUpdate(req.params.Id, { Role: 'admin' });

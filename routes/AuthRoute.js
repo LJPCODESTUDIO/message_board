@@ -1,4 +1,4 @@
-const { Signup, Login, Logout, ChangePassword, AuthorizeAndBlock, Account, Profile, MakeUserAdmin, GetUserPermissionLevel} = require("../controllers/AuthController");
+const { Signup, Login, Logout, ChangePassword, AuthorizeAndBlock, AuthorizeAndPass, Account, Profile, MakeUserAdmin, GetUserPermissionLevel} = require("../controllers/AuthController");
 const router = require("express").Router();
 
 
@@ -9,6 +9,6 @@ router.post("/changepassword", AuthorizeAndBlock, ChangePassword);
 router.post('/role/admin/:Id', AuthorizeAndBlock, MakeUserAdmin);
 router.get("/account", AuthorizeAndBlock, Account);
 router.get('/profile/:Id', Profile);
-router.get('/profile/:Id/permission-level', AuthorizeAndBlock, GetUserPermissionLevel);
+router.get('/profile/:Id/permission-level', AuthorizeAndPass, GetUserPermissionLevel);
 
 module.exports = router;
